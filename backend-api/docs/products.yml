@@ -1,0 +1,201 @@
+paths:
+  /products:
+    post:
+      tags:
+        - Products
+      summary: Add a new product
+      description: Creates a new product with the provided data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - price
+                - category
+                - size
+                - amount
+                - color
+              properties:
+                code:
+                  type: string
+                name:
+                  type: string
+                price:
+                  type: number
+                  format: float
+                category:
+                  type: string
+                  enum: ['Camisa', 'Accesorio', 'Terno', 'Chaqueta', 'Pantalón']
+                size:
+                  type: string
+                  enum: ['S', 'M', 'L', 'XL']
+                amount:
+                  type: integer
+                  minimum: 0
+                color:
+                  type: string
+                status:
+                  type: boolean
+                  enum: [true, false]
+                  default: true
+                images:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product created successfully"
+                  product:
+                    $ref: '#/components/schemas/Product'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+    get:
+      tags:
+        - Products
+      summary: Retrieve all products
+      description: Fetches a list of all products.
+      responses:
+        '200':
+          description: Products retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Products retrieved successfully"
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '204':
+          description: No Product found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No products found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+
+  /products/upload-images/{code}:
+    post:
+      tags:
+        - Products
+      summary: Upload images for a product
+      description: Uploads images for a specific product.
+      parameters:
+        - in: path
+          name: code
+          required: true
+          description: Product Code
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Images uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Images uploaded successfully"
+                  product:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The product does not exist and images cannot be uploaded"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+          format: float
+        category:
+          type: string
+          enum: ['Camisa', 'Accesorio', 'Terno', 'Chaqueta', 'Pantalón']
+        size:
+          type: string
+          enum: ['S', 'M', 'L', 'XL']
+        amount:
+          type: integer
+          minimum: 0
+        color:
+          type: string
+        status:
+          type: boolean
+          enum: [true, false]
+        images:
+          type: array
+          items:
+            type: string
