@@ -14,6 +14,6 @@ router.get('/get-images/:code', productController.getImages);
 router.put('/:code', productController.updateProduct);
 
 router.delete('/:code', productController.deleteProduct);
-//router.delete('/delete-images/:code', productController.deleteImages)
+router.delete('/delete-image/:code', productController.deleteImage)
 
 export default router;
