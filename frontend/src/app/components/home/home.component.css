@@ -1,0 +1,177 @@
+ /* portada */
+ .container-portada{
+  margin-top: -1px;
+  display: grid;
+  grid-template-columns: minmax(200px, 350px) 1fr;
+  border-bottom: 1px;
+  border-style: solid;
+  border-color: gray;
+}
+.traje-text{
+  font-family: sans-serif;
+  writing-mode: vertical-rl;
+  font-stretch: 100%;
+  text-size-adjust: 100%;
+  font-weight: 400px;
+  background-color: none;
+  font-size: 15vw; /* Ajusta el tamaño según el ancho de la pantalla */
+  padding: 5%;
+}
+.contenedor-Man{
+  background-color: lightpink;
+  text-align: right;
+  position: relative;
+  display: inline-block;
+}
+.contenedor-overlay{
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  text-align: left;
+}
+.button-overlay-portada{
+  background-color: transparent; justify-content: left; width: 150px; padding: 5px 15px; border: 1px solid white; color: white; border-radius: 25px;
+}
+.button-overlay-portada:hover{
+  background-color: rgb(209, 207, 207);
+  color: black;
+  border-color: black;
+  border-width: 0.5px;
+}
+/* comprar por categorias*/
+.comprar-categorias-container,
+.ultimos-modelos-container
+{
+    padding: 50px 50px 50px 50px;
+    font-size: 20px;
+    text-align: center;
+}
+.container-categorias{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Cuatro columnas, cada una ocupa el 25% */
+  gap: 5px; /* Espacio entre las imágenes */
+  max-width: 1320px;
+  width: 100%;
+  height: auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.item{
+  position: relative;
+  text-align: center;
+  display: inline-block;
+}
+.item img {
+
+  width: 100%; /* Asegura que se adapte al contenedor */
+  max-width: 300px; /* Define un tamaño uniforme */
+  height: 380px; /* Altura uniforme para todas las imágenes */
+  object-fit: cover; /* Ajusta las imágenes sin distorsión */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Reduce el efecto de sombra */
+  display: block;
+}
+.button-camisas{
+  position: absolute;
+  border-radius: 25px;
+  background-color: white;
+  top: 90%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: black;
+  width: 137px;
+  height: 30px;
+  font-size: 13px; 
+  /*text-align: center;*/
+  border-width: 1px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  cursor: pointer;
+}
+.button-camisas:hover{
+  background-color: gray;
+}
+/*ultimos modelos */
+.container-ultimos-modelos{
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;    
+  column-gap: 7px;    
+  width: 100%;
+  background-color: lightgray;
+}
+.contenedor-blazer-azul,
+.contenedor-terno-gris{
+  height: 27em;
+  margin: 0px 3px;
+  border-color: none;
+
+}
+.contenedor-blazer-azul{
+  margin-left: 10 px;
+}
+.contenedor-modelos-clasicos{
+  grid-row: span 2;
+}
+.texto-modelos{
+  font-weight: bold;
+  margin-top: 12px;
+}
+.contenedor-terno-marron{
+  margin-top: 100px;
+  height: 29em;
+  margin: 0px 3px;
+
+}
+/* mejores promociones */
+.image-container{
+  position: relative;
+  display: inline-block;
+
+}
+.image-container img{
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.image-container .text-overlay{
+  position: absolute;
+  top: 40%;
+  left: 60%;
+  color: white;
+  font-size: 45px;
+  font-family: 'Times New Roman', Times, serif;
+}
+.image-container .button-overlay{
+  position: absolute;
+  top: 60%;
+  left: 60%;
+  color: white;
+}
+.button-overlay{
+  background-color: transparent;
+  border: 2px solid white;
+  padding: 4px 55px 4px 55px;
+  border-radius: 20px;
+  font-size: 20px;
+  cursor: pointer;
+  font-family: "eb garamond", serif;
+}
+.button-overlay:hover{
+  background-color: rgb(209, 207, 207);
+  color: black;
+  border-color: black;
+  border-width: 0.5px;
+}
+/* redes sociales */
+.redes-sociales-container{
+  display: grid;
+  margin-top: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+.text-redes-sociales{
+  font-size: 20px;
+  font-family: 'Times New Roman', Times, serif;
+}
+.image-redes-sociales{
+  object-fit: contain;
+  text-align: end;
+}
