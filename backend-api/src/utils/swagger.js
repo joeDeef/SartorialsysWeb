@@ -6,7 +6,7 @@ const combinedSpec = {
   openapi: '3.0.0',
         info: {
             title: 'SartorialSys API',
-            version: '2.0.0',
+            version: '2.1.0',
             description: 'API for managing SartorialSys WEb',
             contact: {
                 name: 'Joel Defaz'

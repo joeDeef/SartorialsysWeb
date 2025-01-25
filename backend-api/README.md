@@ -1,4 +1,4 @@
-# Documentación para SartorialSys API v2.0.0
+# Documentación para SartorialSys API v2.1.0
 
 **Proyecto:** SartorialSys Web
 
@@ -22,7 +22,7 @@ Para la ejecución correcta del proyecto se debe tener instalado MongoDB Communi
 Una vez instalado se puede usar MongoDB Compas para crear la base de datos con ayuda de la conexión por defecto (default)
 Crear la base llamada sartorialsys y 2 colecciones (users y products)
 
-   ![DB MongoDB](./docs/imgReadme/DB.png)
+   ![DB MongoDB](../imgReadme/DB.png)
 
 ## Configuración
 ### Dependencias
