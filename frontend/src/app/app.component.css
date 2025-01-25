@@ -1,0 +1,20 @@
+/* Asegurar que no haya márgenes ni relleno en el documento */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Contenedor principal con flexbox */
+  .layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0; /* Sin márgenes */
+  }
+  
+  /* Contenido principal */
+  .main-content {
+    flex: 1; /* Ocupa el espacio disponible */
+  }

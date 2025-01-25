@@ -22,7 +22,7 @@ Para la ejecución correcta del proyecto se debe tener instalado MongoDB Communi
 Una vez instalado se puede usar MongoDB Compas para crear la base de datos con ayuda de la conexión por defecto (default)
 Crear la base llamada sartorialsys y 2 colecciones (users y products)
 
-   ![DB MongoDB](./imgReadme/DB.png)
+   ![DB MongoDB](./docs/imgReadme/DB.png)
 
 ## Configuración
 ### Dependencias

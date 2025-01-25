@@ -1,0 +1,26 @@
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<header id="header">
+  <nav>
+    <p class="brand">Trajes Hidalgo Plus</p>
+    <ul>
+      <li><a [routerLink]="['/home']">Inicio</a></li>
+      <li><a [routerLink]="['/camisas']">Camisas</a></li>
+      <li><a [routerLink]="['/pantalones']">Pantalones</a></li>
+      <li><a [routerLink]="['/ternos']">Ternos</a></li>
+      <li><a [routerLink]="['/accesorios']">Accesorios</a></li>
+      <li>
+        <a [routerLink]="['/login']">
+          <i class="fas fa-user-circle"></i> Iniciar Sesion
+        </a>
+      </li>
+      <li class="carrito">
+        <a [routerLink]="['/carrito']">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="carrito-text">Carrito</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
