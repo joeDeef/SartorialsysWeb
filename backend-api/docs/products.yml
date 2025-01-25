@@ -41,10 +41,6 @@ paths:
                   type: boolean
                   enum: [true, false]
                   default: true
-                images:
-                  type: array
-                  items:
-                    type: string
       responses:
         '201':
           description: Product created successfully
@@ -58,6 +54,16 @@ paths:
                     example: "Product created successfully"
                   product:
                     $ref: '#/components/schemas/Product'
+        '409':
+          description: Existing code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "This code already exists: {code}"
         '500':
           description: Internal server error
           content:
@@ -89,7 +95,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/Product'
         '204':
-          description: No Product found
+          description: No products found
           content:
             application/json:
               schema:
@@ -157,6 +163,226 @@ paths:
                   message:
                     type: string
                     example: "The product does not exist and images cannot be uploaded"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+
+  /products/{code}:
+    get:
+      tags:
+        - Products
+      summary: Retrieve a specific product
+      description: Fetches a product by its code.
+      parameters:
+        - in: path
+          name: code
+          required: true
+          description: Product Code
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  product:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No product found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+    put:
+      tags:
+        - Products
+      summary: Update an existing product
+      description: Updates an existing product using its code.
+      parameters:
+        - in: path
+          name: code
+          required: true
+          description: Product Code
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price:
+                  type: number
+                  format: float
+                category:
+                  type: string
+                size:
+                  type: string
+                amount:
+                  type: integer
+                color:
+                  type: string
+                status:
+                  type: boolean
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product updated successfully"
+                  product:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product not found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+    delete:
+      tags:
+        - Products
+      summary: Delete a product
+      description: Deletes a product using its code.
+      parameters:
+        - in: path
+          name: code
+          required: true
+          description: Product Code
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product deleted successfully"
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product not found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+  /products/delete-image/{code}:
+    delete:
+      tags:
+        - Products
+      summary: Delete an image from a product
+      description: Removes an image associated with a product based on its code and image name.
+      parameters:
+        - in: path
+          name: code
+          required: true
+          description: Product Code
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                imageName:
+                  type: string
+                  description: The name of the image to delete
+      responses:
+        '200':
+          description: Image deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Image deleted successfully"
+                  product:
+                    $ref: '#/components/schemas/Product'
+        '400':
+          description: Image not found in the product
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Image not found in product"
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product not found"
         '500':
           description: Internal server error
           content:

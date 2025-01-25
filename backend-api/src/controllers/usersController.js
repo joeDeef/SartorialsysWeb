@@ -2,7 +2,7 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const SECRET_KEY = 'Clave Secreta ';
+const SECRET_KEY = 'SARTORIALSYS';
 
 export const createUser = async (req, res) => {
   try {

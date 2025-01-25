@@ -14,19 +14,27 @@ export const addProduct = async (req, res) => {
       size,
       amount,
       color,
-      status: req.body.status || true,
+      status: req.body.status !== undefined ? req.body.status : (amount > 0 ? true : false),
       images: []
     });
 
-    var productStored = await product.save();
+    var productStored = await Product.create(product);
 
     if (!productStored) {
       return res.status(404).send({ message: 'The product was not saved' });
     }
-    return res.status(201).send({ product: productStored });
+
+    return res.status(201).send({ message : "User created successfully", product: productStored });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ message: "Internal server error"});;
+
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: `This code already exists: ${req.body.code}`,
+      });
+    }
+
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -38,7 +46,7 @@ export const getProducts = async (req, res) => {
       return res.status(204).json({ message: "No products found"});
     }
 
-    res.status(200).json(products);
+    res.status(200).json({ message: "Products retrieved successfully", products: products});
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Internal server error"});}
@@ -107,36 +115,64 @@ export const getProduct = async (req, res) => {
     res.status(500).json({ message: "Internal server error"});}
 };
 
-
 export const deleteProduct = async (req, res) => {
   try {
     const codeProduct = req.params.code;
-    const productDeleted = await Product.findOneAndDelete( { code : codeProduct});
+    const productToDelete = await Product.findOne({ code: codeProduct });
 
-    if(!productDeleted){
-      res.status(404).json({message: "Product not found"});
+    if (!productToDelete) {
+      return res.status(404).json({ message: "Product not found" });
     }
 
-    res.status(200).json({message: "Product deleted successfully"});
+    // Usamos process.cwd() para obtener el directorio de trabajo actual
+    const imagesDirectory = path.join(process.cwd(), 'uploads');
+
+    // Eliminar las imágenes asociadas
+    const imageNames = productToDelete.images;
+    if (imageNames && imageNames.length > 0) {
+      for (const imageName of imageNames) {
+        const imagePath = path.join(imagesDirectory, imageName);
+
+        try {
+          await fs.promises.unlink(imagePath);  // Usamos fs.unlink para eliminar el archivo
+        } catch (err) {
+          console.error(`Failed to delete image: ${imagePath}`, err.message);
+        }
+      }
+    }
+
+    await Product.findOneAndDelete({ code: codeProduct });
+
+    res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ message: "Internal server error"});  }
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 export const updateProduct = async (req, res) => {
   try {
-    const codeProduct = req.params.code;
+    const codeProduct = String(req.params.code);
     const body = req.body;
-    const productUpdated = await Product.findByIdAndUpdate({ code: codeProduct}, body, {new : true});
 
-    if(!productUpdated){
+    const productUpdated = await Product.findOneAndUpdate(
+      { code: codeProduct },
+      body,
+      { new: true }
+    );
+
+    if (!productUpdated) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    res.status(200).json({message: "Product updated sucessful", product: productUpdated});
+    res.status(200).json({
+      message: "Product updated successfully",
+      product: productUpdated,
+    });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ message: "Internal server error"});  }
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 export const getImages = async (req, res) => {
@@ -174,5 +210,49 @@ export const getImages = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const deleteImage = async (req, res) => {
+  try {
+    const { code } = req.params;
+    const { imageName } = req.body;
+
+    const product = await Product.findOne({ code });
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    const imageWithExtension = product.images.find(image => {
+      const imageNameWithoutExtension = path.basename(image, path.extname(image));
+      return imageNameWithoutExtension === imageName;
+    });
+
+    if (!imageWithExtension) {
+      return res.status(400).json({ message: 'Image not found in product' });
+    }
+
+    const imagesDirectory = path.join(process.cwd(), 'uploads');
+    const imagePath = path.join(imagesDirectory, imageWithExtension);
+
+    try {
+      await fs.promises.unlink(imagePath);
+    } catch (err) {
+      console.error(`Failed to delete image: ${imagePath}`, err.message);
+      return res.status(500).json({ message: `Failed to delete image: ${err.message}` });
+    }
+
+    const imageIndex = product.images.indexOf(imageWithExtension);
+    if (imageIndex > -1) {
+      product.images.splice(imageIndex, 1);
+    }
+
+    await product.save();
+
+    return res.status(200).json({ message: 'Image deleted successfully', product });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
