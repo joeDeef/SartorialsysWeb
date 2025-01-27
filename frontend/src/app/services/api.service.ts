@@ -1,7 +1,7 @@
 import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IProduct,Product } from '../models/product.model';
+import { IProduct,NewProduct,Product } from '../models/product.model';
 import { Global } from './global.service';
 
 @Injectable()
@@ -20,17 +20,27 @@ export class ApiService {
     let headers=new HttpHeaders().set('Content-Type','application/json');
     return this._httpClient.get<Product>(`${this.url}/products/${code}`);
   }
-  public addProduct(product:IProduct):Observable<IProduct>{ //devuelve observable de productos
+  //anadir un nuevo producto
+  public addProduct(product:NewProduct):Observable<any>{ //devuelve observable de productos
     let params=JSON.stringify(product);
     let headers=new HttpHeaders().set('Content-Type','application/json');
-    return this._httpClient.post<IProduct>(`${this.url}/products`,params,{headers:headers});
+    return this._httpClient.post<any>(`${this.url}/products`,params,{headers:headers});
   }
+  //actualizar la imagen de un producto
+  public uploadImage(productId: string, file: File): Observable<any> {
+    const formData = new FormData(); // Creamos el formulario
+    formData.append('image', file); // Añadimos el archivo bajo la clave "image"
+  
+    return this._httpClient.post<any>(`${this.url}/products/upload-images/${productId}`, formData);
+  }
+  //actualizar un nuevo producto 
   public updateProduct(code:string,product:IProduct):Observable<IProduct>{
     let params=JSON.stringify(product);
     let headers=new HttpHeaders().set('Content-Type','application/json');
     return this._httpClient.put<IProduct>(`${this.url}/${code}`,params,{headers:headers});
   }
-  public deleteProduct(code:string):Observable<IProduct>{
-    return this._httpClient.delete<IProduct>(`${this.url}/${code}`);
+  public deleteProduct(code:string):Observable<any>{
+    return this._httpClient.delete<any>(`${this.url}/${code}`);
   }
+
 }

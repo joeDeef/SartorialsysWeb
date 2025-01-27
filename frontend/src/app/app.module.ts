@@ -9,7 +9,9 @@ import { FooterComponent } from './components/footer/footer.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { ProductsComponent } from './products/products.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http'
+import {HttpClientModule} from '@angular/common/http';
+import { CreateProductComponent } from './components/create-product/create-product.component';
+import { EditarProductComponent } from './components/editar-product/editar-product.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -17,7 +19,9 @@ import {HttpClientModule} from '@angular/common/http'
     HeaderComponent,
     FooterComponent,
     ProductDetailComponent,
-    ProductsComponent
+    ProductsComponent,
+    CreateProductComponent,
+    EditarProductComponent
   ],
   imports: [
     BrowserModule,

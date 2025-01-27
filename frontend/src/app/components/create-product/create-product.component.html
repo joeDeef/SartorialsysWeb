@@ -1,0 +1,98 @@
+<div class="container">
+  <h2>{{ titulo }}</h2>
+
+  <!-- Mensajes de estado -->
+  <div class="message success" *ngIf="status == 'success'">
+    El Producto se ha guardado correctamente, puedes verlo
+    <a [routerLink]="['products']">aquí</a>
+  </div>
+  <div class="message failed" *ngIf="status == 'failed'">
+    El producto no se ha podido guardar.
+  </div>
+
+  <!-- Formulario para crear producto -->
+  <form #productForm="ngForm" (ngSubmit)="newProduct(productForm)">
+    <p>
+      <label for="code">Code</label>
+      <input
+        type="text"
+        name="code"
+        #code="ngModel"
+        [(ngModel)]="product.code"
+        required
+      />
+      <span *ngIf="code.touched && !code.valid"> Code obligatorio </span>
+    </p>
+    <p>
+      <label for="name">Nombre</label>
+      <input
+        type="text"
+        name="name"
+        #name="ngModel"
+        [(ngModel)]="product.name"
+        required
+      />
+      <span *ngIf="name.touched && !name.valid"> Nombre obligatorio </span>
+    </p>
+    <p>
+      <label for="price">Precio</label>
+      <input
+        type="number"
+        name="price"
+        #price="ngModel"
+        [(ngModel)]="product.price"
+        required
+      />
+    </p>
+    <p>
+      <label for="category">Categoría</label>
+      <input
+        type="text"
+        name="category"
+        #category="ngModel"
+        [(ngModel)]="product.category"
+        required
+      />
+      <span *ngIf="category.touched && !category.valid">
+        Categoría obligatoria
+      </span>
+    </p>
+    <p>
+      <label for="size">Talla</label>
+      <input
+        type="text"
+        name="size"
+        #size="ngModel"
+        [(ngModel)]="product.size"
+        required
+      />
+      <span *ngIf="size.touched && !size.valid"> Talla obligatoria </span>
+    </p>
+    <p>
+      <label for="amount">Cantidad</label>
+      <input
+        type="number"
+        name="amount"
+        #amount="ngModel"
+        [(ngModel)]="product.amount"
+        required
+      />
+    </p>
+    <p>
+      <label for="color">Color</label>
+      <input
+        type="text"
+        name="color"
+        #color="ngModel"
+        [(ngModel)]="product.color"
+        required
+      />
+      <span *ngIf="color.touched && !color.valid"> Color obligatorio </span>
+    </p>
+    <p>
+      <label for="image">Imagen</label>
+      <input type="file" name="image" (change)="imagenChangeEvent($event)" #fileInput />
+    </p>
+    <input type="submit" value="Guardar" [disabled]="!productForm.form.valid" />
+  </form>
+</div>
