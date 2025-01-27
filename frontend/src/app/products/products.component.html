@@ -1,0 +1,25 @@
+<div>
+  <!-- Título dinámico basado en la categoría -->
+  <h1 *ngIf="isAll; else categoryTitle">Todos los Productos</h1>
+  <ng-template #categoryTitle>
+    <h1>Productos de {{ currentCategory | titlecase }}</h1>
+  </ng-template>
+
+  <!-- Lista de productos -->
+  <div class="container">
+    <a
+      class="product-card"
+      *ngFor="let product of filteredProducts"
+      [routerLink]="['/products', product.category, product.code]"
+    >
+      <img src="{{url+'/uploads/'+product.images[0]}}" [alt]="product.name" />
+      <h3>{{ product.name }}</h3>
+      <p>{{ product.price | currency }}</p>
+    </a>
+  </div>
+
+  <!-- Mensaje si no hay productos -->
+  <div *ngIf="filteredProducts.length === 0" class="no-products">
+    <p>No hay productos disponibles para esta categoría.</p>
+  </div>
+</div>
