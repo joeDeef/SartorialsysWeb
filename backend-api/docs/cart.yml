@@ -1,0 +1,196 @@
+paths:
+  /carts/{cartId}:
+    post:
+      tags:
+        - Cart
+      summary: Add a product to the cart
+      description: Adds a specified product to the cart with the given quantity.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Unique identifier for the cart
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productCode:
+                  type: string
+                  example: "P12345"
+                quantity:
+                  type: number
+                  example: 2
+      responses:
+        '200':
+          description: Product added to the cart and inventory updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product added to cart and inventory updated"
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        '404':
+          description: Cart or product not found
+        '400':
+          description: Not enough stock available
+        '500':
+          description: Internal server error
+
+    get:
+      tags:
+        - Cart
+      summary: Retrieve the cart
+      description: Fetches the contents of the specified cart.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Unique identifier for the cart
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cart retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Cart Found"
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        '404':
+          description: Cart not found
+        '500':
+          description: Internal server error
+
+    put:
+      tags:
+        - Cart
+      summary: Update product quantity in the cart
+      description: Updates the quantity of a specified product in the cart.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Unique identifier for the cart
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productCode:
+                  type: string
+                  example: "P12345"
+                newQuantity:
+                  type: number
+                  example: 3
+      responses:
+        '200':
+          description: Product quantity updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product quantity updated successfully"
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        '404':
+          description: Product not found in cart or cart not found
+        '400':
+          description: Invalid quantity or not enough stock available
+        '500':
+          description: Internal server error
+
+    delete:
+      tags:
+        - Cart
+      summary: Remove a product from the cart
+      description: Removes a specified product from the cart.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Unique identifier for the cart
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productCode:
+                  type: string
+                  example: "P12345"
+      responses:
+        '200':
+          description: Product removed from the cart and stock updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product removed from cart and stock updated"
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        '404':
+          description: Product not found in cart or cart not found
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        user:
+          type: string
+          example: "60d4e73fbc3c6c001f0e9b0f"
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: "60d4e73fbc3c6c001f0e9b0d"
+                  code:
+                    type: string
+                    example: "P12345"
+                  name:
+                    type: string
+                    example: "Product Name"
+                  price:
+                    type: number
+                    example: 20.99
+              quantity:
+                type: number
+                example: 2
+        totalPrice:
+          type: number
+          example: 41.98
