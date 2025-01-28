@@ -6,6 +6,7 @@ import { Component, HostListener } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
+  mostrarModal = false;
   lastScrollTop = 0;
   header = document.getElementById('header');
 
