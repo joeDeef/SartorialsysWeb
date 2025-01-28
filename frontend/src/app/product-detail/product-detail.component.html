@@ -1,9 +1,12 @@
-<p>{{ product?.category| uppercase }}</p>
+<p>{{ product?.category | uppercase }}</p>
 <ng-container *ngIf="!loading">
   <div class="product-detail">
     <!-- Imagen del producto -->
     <div class="product-image">
-      <img src="{{url+'/uploads/'+urlImages}}" alt="Camisa Pical Rosado" />
+      <img
+        src="{{ url + '/uploads/' + urlImages }}"
+        alt="Camisa Pical Rosado"
+      />
     </div>
 
     <!-- Información del producto -->
@@ -31,6 +34,13 @@
       <div class="actions">
         <button class="add-to-cart">Agregar al carrito</button>
         <button class="buy-now">Realizar compra</button>
+      </div>
+      <!-- Botones adicionales -->
+      <div class="extra-actions">
+        <button class="delete" (click)="eliminarProducto()" *ngIf="isAdminRoute">Eliminar</button>
+        <button class="update" (click)="actualizarProducto()"*ngIf="isAdminRoute">
+          Actualizar
+        </button>
       </div>
     </div>
   </div>

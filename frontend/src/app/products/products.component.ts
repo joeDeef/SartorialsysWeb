@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IProduct, Product } from '../models/product.model';
 import { ApiService } from '../services/api.service';
 import { Global } from '../services/global.service';
@@ -16,11 +16,16 @@ export class ProductsComponent implements OnInit {
   productsList: Product[] = [];
   filteredProducts: Product[] = [];
   isAll: boolean = true;
-  constructor(private _apiService: ApiService, private route: ActivatedRoute) {
+  isAdminRoute: boolean = false; //para ver si la ruta contine administrarion
+  constructor(private _apiService: ApiService, private route: ActivatedRoute, private _router: Router) {
     this.url=Global.url;
    }
 
   ngOnInit(): void {
+     // Verifica si la ruta actual contiene "administration"
+     this._router.events.subscribe(() => {
+      this.isAdminRoute = this._router.url.includes('administration');
+    });
     this.route.paramMap.subscribe(params => {
       this.currentCategory = params.get('category') || '';
       this.isAll = this.currentCategory === ''; 
