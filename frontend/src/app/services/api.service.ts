@@ -16,9 +16,9 @@ export class ApiService {
     return this._httpClient.get<IProduct>(`${this.url}/products`);
   }
   //ver libro por id 
-  public getProductsByCode(code:string):Observable<Product>{ //devuelve observable de un producto
+  public getProductsByCode(code:string):Observable<any>{ //devuelve observable de un producto
     let headers=new HttpHeaders().set('Content-Type','application/json');
-    return this._httpClient.get<Product>(`${this.url}/products/${code}`);
+    return this._httpClient.get<any>(`${this.url}/products/${code}`);
   }
   //anadir un nuevo producto
   public addProduct(product:NewProduct):Observable<any>{ //devuelve observable de productos
@@ -34,13 +34,13 @@ export class ApiService {
     return this._httpClient.post<any>(`${this.url}/products/upload-images/${productId}`, formData);
   }
   //actualizar un nuevo producto 
-  public updateProduct(code:string,product:IProduct):Observable<IProduct>{
+  public updateProduct(code:string,product:Product):Observable<any>{
     let params=JSON.stringify(product);
     let headers=new HttpHeaders().set('Content-Type','application/json');
-    return this._httpClient.put<IProduct>(`${this.url}/${code}`,params,{headers:headers});
+    return this._httpClient.put<any>(`${this.url}/${code}`,params,{headers:headers});
   }
   public deleteProduct(code:string):Observable<any>{
-    return this._httpClient.delete<any>(`${this.url}/${code}`);
+    return this._httpClient.delete<any>(`${this.url}/products/${code}`);
   }
 
 }

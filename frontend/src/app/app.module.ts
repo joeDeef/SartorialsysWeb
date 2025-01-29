@@ -11,8 +11,8 @@ import { ProductsComponent } from './products/products.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import { CreateProductComponent } from './components/create-product/create-product.component';
-import { EditarProductComponent } from './components/editar-product/editar-product.component';
-import { AdministationComponent } from './components/administation/administation.component'
+import { AdministationComponent } from './components/administation/administation.component';
+import { EditProductComponent } from './components/edit-product/edit-product.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,8 +22,8 @@ import { AdministationComponent } from './components/administation/administation
     ProductDetailComponent,
     ProductsComponent,
     CreateProductComponent,
-    EditarProductComponent,
-    AdministationComponent
+    AdministationComponent,
+    EditProductComponent
   ],
   imports: [
     BrowserModule,

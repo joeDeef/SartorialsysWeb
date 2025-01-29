@@ -1,4 +1,4 @@
-<p>{{ product?.category | uppercase }}</p>
+<p>{{ product.category | uppercase }}</p>
 <ng-container *ngIf="!loading">
   <div class="product-detail">
     <!-- Imagen del producto -->
@@ -11,8 +11,8 @@
 
     <!-- Información del producto -->
     <div class="product-info">
-      <h1>{{ product?.name }}</h1>
-      <p>{{ product?.price | currency }}</p>
+      <h1>{{ product.name }}</h1>
+      <p>{{ product.price | currency }}</p>
 
       <!-- Selección de talla -->
       <select>
@@ -37,8 +37,8 @@
       </div>
       <!-- Botones adicionales -->
       <div class="extra-actions">
-        <button class="delete" (click)="eliminarProducto()" *ngIf="isAdminRoute">Eliminar</button>
-        <button class="update" (click)="actualizarProducto()"*ngIf="isAdminRoute">
+        <button class="delete" (click)="eliminarProducto(product.code)" *ngIf="isAdminRoute">Eliminar</button>
+        <button class="update" [routerLink]="['/administration/products/edit-product',product.code]"  *ngIf="isAdminRoute">
           Actualizar
         </button>
       </div>

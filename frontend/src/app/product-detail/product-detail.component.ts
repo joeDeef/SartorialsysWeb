@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { IProduct, Product } from '../models/product.model';
+import { IProduct, NewProduct, Product } from '../models/product.model';
 import { ApiService } from '../services/api.service';
 import { Global } from '../services/global.service';
 
@@ -11,15 +11,16 @@ import { Global } from '../services/global.service';
   providers: [ApiService]
 })
 export class ProductDetailComponent implements OnInit {
-  isAdminRoute:boolean=false;
+  isAdminRoute: boolean = false;
   public url: string;
-  product?: Product;
+  product: Product;
   public urlImages: string = '';
   loading: boolean = true;
   color: string = '';
   cantidad: number = 1;
-  constructor(private _route: ActivatedRoute, private _apiService: ApiService, private _router:Router) {
+  constructor(private _route: ActivatedRoute, private _apiService: ApiService, private _router: Router) {
     this.url = Global.url;
+    this.product = new Product('', '', '', 0, '', '',0, true, '', [], 1);
   }
   ngOnInit(): void {
     // Verifica si la ruta actual contiene "administration"
@@ -32,7 +33,7 @@ export class ProductDetailComponent implements OnInit {
           next: (data: Product) => { // Nota que ahora asumimos que data es un array de Product
             this.product = data; // Toma el primer elemento del array
             console.log(this.product); // Imprime el producto completo
-            this.urlImages=this.product.images[0];
+            this.urlImages = this.product.images[0];
             console.log(this.urlImages);
             this.loading = false;
           },
@@ -55,11 +56,31 @@ export class ProductDetailComponent implements OnInit {
       this.cantidad = 0;
     }
   }
-  eliminarProducto(){
+  eliminarProducto(code: string) {
+    const confirmacion = window.confirm('¿Estás seguro de que deseas eliminar este producto?');
+    if (confirmacion) {
+      this._apiService.deleteProduct(code).subscribe(
+        response => {
+          if (response.message === 'Product deleted successfully') {
+            console.log('Producto eliminado correctamente');
+            this._router.navigate(['/administration/products']); // Asegúrate de usar la ruta absoluta
+          } else {
+            console.error('Error: Respuesta inesperada del servidor');
+          }
+        },
+        error => {
+          console.log(<any>error);
+        }
+      )
+    } else {
+      // Si el usuario cancela, no hace nada
+      console.log('Eliminación cancelada por el usuario');
+    }
 
   }
-  actualizarProducto(){
-
+  actualizarProducto(code:string) {
+  // Redirige al componente EditarProducto pasando el ID del producto
+  this._router.navigate(['administration/products/edit-product',this.product.code]);
   }
 
 }
