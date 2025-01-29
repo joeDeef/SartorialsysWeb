@@ -8,6 +8,9 @@ import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { AdministationComponent } from './components/administation/administation.component';
 import { EditProductComponent } from './components/edit-product/edit-product.component';
+import { UsersComponent } from './components/users/users.component';
+import { AddUserComponent } from './components/add-user/add-user.component';
+import { ManageUserComponent } from './components/manage-user/manage-user.component';
 
 const routes: Routes = [
   // Default route
@@ -28,6 +31,9 @@ const routes: Routes = [
   // Product administration routes
   { path: 'administration', component: AdministationComponent },
   { path: 'administration/products', component: ProductsComponent },
+  { path: 'administration/users', component: UsersComponent },
+  { path: 'administration/add-user', component: AddUserComponent },
+  { path: 'administration/manage-user/:id', component: ManageUserComponent },
   { path: 'administration/products/edit-product/:id', component: EditProductComponent },
   { path: 'administration/products/create-product', component: CreateProductComponent },
   { path: 'administration/products/:id', component: ProductDetailComponent },

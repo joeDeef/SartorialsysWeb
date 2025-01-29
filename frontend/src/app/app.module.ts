@@ -14,10 +14,13 @@ import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { AdministationComponent } from './components/administation/administation.component';
 import { EditProductComponent } from './components/edit-product/edit-product.component';
+import { UsersComponent } from './components/users/users.component';
 
 // Modules
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { AddUserComponent } from './components/add-user/add-user.component';
+import { ManageUserComponent } from './components/manage-user/manage-user.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +34,10 @@ import { HttpClientModule } from '@angular/common/http';
     LoginComponent,
     SignupComponent,
     AdministationComponent,
-    EditProductComponent
+    EditProductComponent,
+    UsersComponent,
+    AddUserComponent,
+    ManageUserComponent
   ],
   imports: [
     BrowserModule,
