@@ -1,0 +1,47 @@
+<div class="header">
+    <!-- Input para filtrar -->
+    <input
+      type="text"
+      placeholder="Buscar usuario..."
+      [(ngModel)]="searchText"
+      class="search-input"
+    />
+  
+    <!-- Botón para añadir usuario -->
+    <button class="add-user-btn" [routerLink]="['/administration/add-user']">
+      Añadir Usuario
+    </button>
+  </div>
+  
+  <!-- Tabla de usuarios -->
+  <div class="user-table-container">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Rol</th>
+          <th>Email</th>
+          <th>Cart ID</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers(); let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ user._id }}</td>
+          <td>{{ user.name }}</td>
+          <td>{{ user.last_name }}</td>
+          <td>{{ user.role }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.cart }}</td>
+          <td>
+            <a [routerLink]="['/administration/manage-user', user._id]">Ver</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
