@@ -96,3 +96,31 @@
   color: black;
   border: 1px solid black;
 }
+.actions,
+.extra-actions {
+  display: flex;
+  gap: 10px; /* Espaciado entre botones */
+  margin-top: 20px;
+}
+.delete,
+.update {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.delete {
+  background-color: #dc3545; /* Rojo */
+  color: white;
+}
+
+.update {
+  background-color: #28a745; /* Verde */
+  color: white;
+}
+
+button:hover {
+  opacity: 0.9; /* Ligero efecto al pasar el mouse */
+}

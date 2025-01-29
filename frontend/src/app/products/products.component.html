@@ -1,4 +1,7 @@
 <div>
+  <div class="buttons">
+    <button *ngIf="isAdminRoute" class="add-button" [routerLink]="['/administration/products/create-product']">Agregar Producto</button>
+  </div>
   <!-- Título dinámico basado en la categoría -->
   <h1 *ngIf="isAll; else categoryTitle">Todos los Productos</h1>
   <ng-template #categoryTitle>
@@ -10,7 +13,9 @@
     <a
       class="product-card"
       *ngFor="let product of filteredProducts"
-      [routerLink]="['/products', product.category, product.code]"
+      [routerLink]="isAdminRoute 
+        ? ['/administration/products', product.code] 
+        : ['/products', product.category, product.code]"
     >
       <img src="{{url+'/uploads/'+product.images[0]}}" [alt]="product.name" />
       <h3>{{ product.name }}</h3>

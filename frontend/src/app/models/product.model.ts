@@ -3,17 +3,44 @@ export interface IProduct {
   products: Product[];
 }
 
-export interface Product {
+export class Product {
   _id:      string;
   code:     string;
   name:     string;
   price:    number;
   category: string;
   size:     string;
+  amount: number;
   status:   boolean;
   color:    string;
   images:   any[];
   __v:      number;
+  constructor(
+    _id:string,
+    code:string,
+    name:string,
+    price:number,
+    category:string,
+    size:string,
+    amount:number,
+    status:boolean,
+    color:string,
+    images:any[],
+    _v:number
+
+  ){
+    this._id=_id;
+    this.code=code;
+    this.name=name;
+    this.price=price;
+    this.category=category;
+    this.size=size;
+    this.amount=amount;
+    this.status=status;
+    this.color=color;
+    this.images=images;
+    this.__v=_v;
+  }
 }
 export class NewProduct {
   code: string;
