@@ -1,33 +1,33 @@
+<!-- register.component.html -->
 <div class="register-container">
-    <!-- Sección del formulario (ahora primero) -->
-    <div class="form-section">
-      <div class="form-container">
-        <h2>Crear Cuenta</h2>
-        <p>Regístrate para empezar a comprar</p>
-  
-        <form>
-          <input type="text" class="input-field" placeholder="Ingresa tu nombre" name="name" required />
-          <input type="text" class="input-field" placeholder="Ingresa tu apellido" name="last_name" required />
-          <input type="email" class="input-field" placeholder="Ingresa tu correo electrónico" name="email" required />
-          <input type="password" class="input-field" placeholder="Ingresa tu contraseña" name="password" required />
-          <button type="submit" class="register-button">Crear Cuenta</button>
-        </form>
-  
-        <p class="mt-4">
-          ¿Ya tienes una cuenta?
-          <a [routerLink]="['/login']">Iniciar Sesión</a>
-        </p>
-      </div>
-    </div>
-  
-    <!-- Sección del logo (ahora al final) -->
-    <div class="logo-section">
-      <div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <h1>
-          <span class="sartorial">Sartorial</span><span class="sys">Sys</span>
-        </h1>
-        <p>TRAJES HIDALGO PLUS</p>
-      </div>
+  <!-- Sección del formulario (ahora primero) -->
+  <div class="form-section">
+    <div class="form-container">
+      <h2>Crear Cuenta</h2>
+      <p>Regístrate para empezar a comprar</p>
+
+      <form (ngSubmit)="onRegister()">
+        <input type="text" class="input-field" placeholder="Ingresa tu nombre" [(ngModel)]="user.name" name="name" required />
+        <input type="text" class="input-field" placeholder="Ingresa tu apellido" [(ngModel)]="user.last_name" name="last_name" required />
+        <input type="email" class="input-field" placeholder="Ingresa tu correo electrónico" [(ngModel)]="user.email" name="email" required />
+        <input type="password" class="input-field" placeholder="Ingresa tu contraseña" [(ngModel)]="user.password" name="password" required />
+        <button type="submit" class="register-button">Crear Cuenta</button>
+      </form>
+
+      <p class="mt-4">
+        ¿Ya tienes una cuenta?
+        <a [routerLink]="['/login']">Iniciar Sesión</a>
+      </p>
     </div>
   </div>
-  
+
+  <!-- Sección del logo (ahora al final) -->
+  <div class="logo-section">
+    <div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+      <h1>
+        <span class="sartorial">Sartorial</span><span class="sys">Sys</span>
+      </h1>
+      <p>TRAJES HIDALGO PLUS</p>
+    </div>
+  </div>
+</div>

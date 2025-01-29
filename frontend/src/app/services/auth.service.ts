@@ -8,7 +8,7 @@ import { Global } from '../services/global.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${Global.url}/users/login`;
+  private apiUrl = `${Global.url}/users`;
   private tokenKey = 'authToken';
   private userKey = 'authUser';
 
@@ -17,7 +17,7 @@ export class AuthService {
   // Enviar las credenciales al backend y recibir la respuesta
   login(email: string, password: string): Observable<any> {
     const credentials = { email, password };
-    return this.http.post<any>(this.apiUrl, credentials).pipe(
+    return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
         if (response.token) {
           this.saveToken(response.token);
@@ -56,5 +56,9 @@ export class AuthService {
   // Verificar si el usuario está autenticado
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  register(user: { name: string, last_name: string, email: string, password: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}`, user);
   }
 }
