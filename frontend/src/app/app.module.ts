@@ -11,7 +11,9 @@ import { ProductsComponent } from './products/products.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import { CreateProductComponent } from './components/create-product/create-product.component';
-import { EditarProductComponent } from './components/editar-product/editar-product.component'
+import { EditarProductComponent } from './components/editar-product/editar-product.component';
+import { LoginComponent } from './components/login/login.component';
+import { SignupComponent } from './components/signup/signup.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -21,7 +23,9 @@ import { EditarProductComponent } from './components/editar-product/editar-produ
     ProductDetailComponent,
     ProductsComponent,
     CreateProductComponent,
-    EditarProductComponent
+    EditarProductComponent,
+    LoginComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,
