@@ -1,47 +1,30 @@
 <div class="login-container">
-    <!-- Sección del logo -->
-    <div class="logo-section">
-        <div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-          <h1>
-            <span class="sartorial">Sartorial</span><span class="sys">Sys</span>
-          </h1>
-          <p>TRAJES HIDALGO PLUS</p>
-        </div>
-      </div>
-      
-  
-    <!-- Sección del formulario -->
-    <div class="form-section">
-      <div class="form-container">
-        <h2>Iniciar Sesión</h2>
-        <p>Inicia sesión en nuestra tienda para empezar a comprar</p>
-  
-        <form>
-          <input type="email" class="input-field" placeholder="Ingresa tu correo electrónico" />
-          <input type="password" class="input-field" placeholder="Ingresa tu contraseña" />
-          <button type="submit" class="login-button">Ingresar</button>
-        </form>
-  
-        <a href="#" class="link">¿Olvidó su contraseña?</a>
-  
-        <!-- Botones sociales -->
-        <div class="social-buttons">
-          <div class="social-button">
-            <img src="https://img.icons8.com/?size=512&id=17949&format=png" width="20" />
-          </div>
-          <div class="social-button">
-            <img src="https://cdn-icons-png.flaticon.com/512/2/2235.png" width="20" />
-          </div>
-          <div class="social-button">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/2048px-2021_Facebook_icon.svg.png" width="20" />
-          </div>
-        </div>
-  
-        <p class="mt-4">
-          ¿No tienes una cuenta?
-          <a href="#" class="link">Crear Cuenta</a>
-        </p>
-      </div>
+  <div class="logo-section">
+    <h1>
+      <span class="sartorial">Sartorial</span><span class="sys">Sys</span>
+    </h1>
+    <p>TRAJES HIDALGO PLUS</p>
+  </div>
+
+  <div class="form-section">
+    <div class="form-container">
+      <h2>Iniciar Sesión</h2>
+      <p>Inicia sesión en nuestra tienda para empezar a comprar</p>
+
+      <form (ngSubmit)="onSubmit()">
+        <input type="email" class="input-field" placeholder="Correo electrónico" [(ngModel)]="email" name="email" required />
+        <input type="password" class="input-field" placeholder="Contraseña" [(ngModel)]="password" name="password" required />
+        <button type="submit" class="login-button">Ingresar</button>
+      </form>
+
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+      <a href="#" class="link">¿Olvidó su contraseña?</a>
+
+      <p class="mt-4">
+        ¿No tienes una cuenta?
+        <a [routerLink]="['/signup']">Crear Cuenta</a>
+      </p>
     </div>
   </div>
-  
+</div>

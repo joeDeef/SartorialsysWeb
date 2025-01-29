@@ -6,6 +6,7 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
 import { CreateProductComponent } from './components/create-product/create-product.component';
 import { EditarProductComponent } from './components/editar-product/editar-product.component';
 import { LoginComponent } from './components/login/login.component';
+import { SignupComponent } from './components/signup/signup.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' }, // Ruta raíz
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'create-product', component: CreateProductComponent },
   { path: 'edit-product/:id', component: EditarProductComponent },
   { path: 'login', component: LoginComponent},
+  { path: 'signup', component: SignupComponent},
   { path: '**', redirectTo: 'home' }, // Ruta comodín
 ];
 
