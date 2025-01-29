@@ -11,6 +11,9 @@ import { ProductsComponent } from './products/products.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import { CreateProductComponent } from './components/create-product/create-product.component';
+import { EditarProductComponent } from './components/editar-product/editar-product.component';
+import { LoginComponent } from './components/login/login.component';
+import { SignupComponent } from './components/signup/signup.component'
 import { AdministationComponent } from './components/administation/administation.component';
 import { EditProductComponent } from './components/edit-product/edit-product.component'
 @NgModule({
@@ -22,6 +25,9 @@ import { EditProductComponent } from './components/edit-product/edit-product.com
     ProductDetailComponent,
     ProductsComponent,
     CreateProductComponent,
+    EditarProductComponent,
+    LoginComponent,
+    SignupComponent
     AdministationComponent,
     EditProductComponent
   ],

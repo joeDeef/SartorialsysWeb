@@ -1,0 +1,30 @@
+<div class="login-container">
+  <div class="logo-section">
+    <h1>
+      <span class="sartorial">Sartorial</span><span class="sys">Sys</span>
+    </h1>
+    <p>TRAJES HIDALGO PLUS</p>
+  </div>
+
+  <div class="form-section">
+    <div class="form-container">
+      <h2>Iniciar Sesión</h2>
+      <p>Inicia sesión en nuestra tienda para empezar a comprar</p>
+
+      <form (ngSubmit)="onSubmit()">
+        <input type="email" class="input-field" placeholder="Correo electrónico" [(ngModel)]="email" name="email" required />
+        <input type="password" class="input-field" placeholder="Contraseña" [(ngModel)]="password" name="password" required />
+        <button type="submit" class="login-button">Ingresar</button>
+      </form>
+
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+      <a href="#" class="link">¿Olvidó su contraseña?</a>
+
+      <p class="mt-4">
+        ¿No tienes una cuenta?
+        <a [routerLink]="['/signup']">Crear Cuenta</a>
+      </p>
+    </div>
+  </div>
+</div>

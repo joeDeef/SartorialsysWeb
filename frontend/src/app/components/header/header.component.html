@@ -5,17 +5,31 @@
   <nav>
     <p class="brand">Trajes Hidalgo Plus</p>
     <ul>
-      <li><a [routerLink]="['home']">Inicio</a></li>
+      <li><a [routerLink]="['/home']">Inicio</a></li>
       <li><a [routerLink]="['/products/Camisa']">Camisas</a></li>
-      <li><a [routerLink]="['products/Terno']">Ternos</a></li>
+      <li><a [routerLink]="['/products/Terno']">Ternos</a></li>
       <li><a [routerLink]="['/products/Pantalón']">Pantalones</a></li>
-      <li><a [routerLink]="['products/Accesorio']">Accesorios</a></li>
-      <li><a [routerLink]="['administration']">Administracion</a></li>
-      <li>
+      <li><a [routerLink]="['/products/Accesorio']">Accesorios</a></li>
+
+      <!-- Solo se muestra si el usuario es Admin -->
+      <li *ngIf="isAdmin">
+        <a [routerLink]="['/administration']">Administracion</a>
+      </li>
+
+      <!-- Si no está autenticado, se muestra "Iniciar Sesión" -->
+      <li *ngIf="!isAuthenticated">
         <a [routerLink]="['/login']">
           <i class="fas fa-user-circle"></i> Iniciar Sesion
         </a>
       </li>
+
+      <!-- Si está autenticado, mostramos el nombre del usuario y la opción de cerrar sesión -->
+      <li *ngIf="isAuthenticated">
+        <span>Bienvenido, {{ userName }}</span>
+        <a href="#" (click)="logout()">Cerrar Sesión</a>
+      </li>
+
+      <!-- Opción del carrito -->
       <li class="carrito">
         <a [routerLink]="['/carrito']">
           <i class="fas fa-shopping-cart"></i>

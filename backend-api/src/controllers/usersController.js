@@ -97,23 +97,34 @@ export const loggingUser = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).send({message: 'Incorrect Email/Unregistered User'});
+      return res.status(400).send({ message: 'Incorrect Email/Unregistered User' });
     }
 
     const isCorrect = await bcrypt.compare(password, user.password);
     if (!isCorrect) {
-      return res.status(400).send({message: 'Wrong Password'});
+      return res.status(400).send({ message: 'Wrong Password' });
     }
 
+    // Generamos el token
     const token = jwt.sign(
-      { id: user._id, email: user.email, role: user.role },
+      { 
+        id: user._id,
+      },
       SECRET_KEY,
       { expiresIn: '1h' }
     );
 
-    res.json({ token });
+    res.json({
+      token,
+      user: {
+        name: user.name,
+        last_name: user.last_name,
+        role: user.role,
+        cartID: user.cart._id,
+      }
+    });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send({message : 'Internal server error'});
+    res.status(500).send({ message: 'Internal server error' });
   }
-}
+};
