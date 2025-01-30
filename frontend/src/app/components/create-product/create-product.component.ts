@@ -73,6 +73,23 @@ export class CreateProductComponent {
     // Guardar los archivos seleccionados en la lista
     this.archivosParaCargar = <Array<File>>archivoSeleccionado.target.files;
   }
+    // Función para mapear nombres de colores a códigos hexadecimales
+    getColorCode(color: string): string {
+      const colorMap: { [key: string]: string } = {
+        Negro: '#000000',
+        Blanco: '#FFFFFF',
+        Azul: '#0000FF',
+        Verde: '#008000',
+        Celeste: '#00FFFF',
+        Rojo: '#FF0000',
+        Violeta: '#8A2BE2',
+        Rosado: '#FFC0CB',
+        Plomo: '#808080',
+        Café: '#A52A2A'
+      };
+  
+      return colorMap[color] || '#000000'; // Por defecto negro si no se encuentra el color
+    }
 
 
 
