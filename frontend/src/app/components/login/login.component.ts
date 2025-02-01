@@ -11,6 +11,7 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
+  passwordFieldType: string = 'password';
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -27,4 +28,8 @@ export class LoginComponent {
       }
     });
   }  
+
+  togglePassword() {
+    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+  }
 }

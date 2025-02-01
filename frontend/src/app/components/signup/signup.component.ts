@@ -14,6 +14,7 @@ export class SignupComponent {
     email: '',
     password: ''
   };
+  passwordFieldType: string = 'password';
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -28,5 +29,9 @@ export class SignupComponent {
         // Aquí puedes mostrar un mensaje de error al usuario si es necesario
       }
     );
+  }
+
+  togglePassword() {
+    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
   }
 }

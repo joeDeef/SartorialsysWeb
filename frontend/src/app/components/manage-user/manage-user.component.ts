@@ -19,6 +19,12 @@ export class ManageUserComponent implements OnInit {
     cart: ''
   };
 
+  passwordFieldType = 'password';
+
+  togglePassword() {
+    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+  }
+
   constructor(private route: ActivatedRoute, private userService: UserService, private router: Router) {}
 
   ngOnInit() {
@@ -39,6 +45,9 @@ export class ManageUserComponent implements OnInit {
 
   // Método para actualizar la información del usuario
   updateUser() {
+    if (!this.user.password) {
+      delete this.user.password;
+    }
     this.userService.updateUser(this.user).subscribe({
       next: () => {
         alert('Usuario actualizado correctamente');
