@@ -1,11 +1,16 @@
 <div class="header">
-    <!-- Input para filtrar -->
+  <!-- Contenedor con etiqueta y input -->
+  <div class="search-container">
+    <label for="search-input" *ngIf="searchText" class="search-label">Buscar usuario:</label>
     <input
+      id="search-input"
       type="text"
       placeholder="Buscar usuario..."
       [(ngModel)]="searchText"
+      (ngModelChange)="onSearchChange(searchText)"
       class="search-input"
     />
+  </div>
   
     <!-- Botón para añadir usuario -->
     <button class="add-user-btn" [routerLink]="['/administration/add-user']">
