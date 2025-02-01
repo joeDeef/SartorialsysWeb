@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import Cart from '../models/Cart.js';
 
 const SECRET_KEY = 'SARTORIALSYS';
 
@@ -84,6 +85,8 @@ export const deleteUser = async (req, res) => {
     if(!userDeleted){
       res.status(404).json({message: "User not found"});
     }
+
+    await Cart.findByIdAndDelete(userDeleted.cart);
 
     res.status(200).json({message: "User deleted successfully"});
   } catch (error) {
