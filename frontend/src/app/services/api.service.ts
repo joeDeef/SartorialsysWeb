@@ -37,7 +37,7 @@ export class ApiService {
   public updateProduct(code:string,product:Product):Observable<any>{
     let params=JSON.stringify(product);
     let headers=new HttpHeaders().set('Content-Type','application/json');
-    return this._httpClient.put<any>(`${this.url}/${code}`,params,{headers:headers});
+    return this._httpClient.put<any>(`${this.url}/products/${code}`,params,{headers:headers});
   }
   public deleteProduct(code:string):Observable<any>{
     return this._httpClient.delete<any>(`${this.url}/products/${code}`);
