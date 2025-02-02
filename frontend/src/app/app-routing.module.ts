@@ -11,6 +11,9 @@ import { EditProductComponent } from './components/edit-product/edit-product.com
 import { UsersComponent } from './components/users/users.component';
 import { AddUserComponent } from './components/add-user/add-user.component';
 import { ManageUserComponent } from './components/manage-user/manage-user.component';
+import { CarritoComponent } from './components/aside-cart/carrito.component';
+import { MainCartComponent } from './components/main-cart/main-cart.component';
+import { CheckoutComponent } from './components/checkout/checkout.component';
 
 const routes: Routes = [
   // Default route
@@ -23,6 +26,9 @@ const routes: Routes = [
   { path: 'products/:category/:id', component: ProductDetailComponent },
   { path: 'products/:category', component: ProductsComponent },
   { path: 'products', component: ProductsComponent },
+  { path: 'cart', component: CarritoComponent, outlet: 'modal' },
+  { path: 'main-cart', component: MainCartComponent },
+  { path: 'checkout', component: CheckoutComponent},
 
   // Authentication routes
   { path: 'login', component: LoginComponent },

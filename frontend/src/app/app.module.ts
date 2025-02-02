@@ -22,6 +22,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { AddUserComponent } from './components/add-user/add-user.component';
 import { ManageUserComponent } from './components/manage-user/manage-user.component';
 
+import { CarritoComponent } from './components/aside-cart/carrito.component';
+import { MainCartComponent } from './components/main-cart/main-cart.component';
+import { CheckoutComponent } from './components/checkout/checkout.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,7 +40,10 @@ import { ManageUserComponent } from './components/manage-user/manage-user.compon
     EditProductComponent,
     UsersComponent,
     AddUserComponent,
-    ManageUserComponent
+    ManageUserComponent,
+    CarritoComponent,
+    MainCartComponent,
+    CheckoutComponent
   ],
   imports: [
     BrowserModule,

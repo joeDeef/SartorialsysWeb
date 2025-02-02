@@ -31,7 +31,7 @@
 
       <!-- Opción del carrito -->
       <li class="carrito">
-        <a [routerLink]="['/carrito']">
+        <a [routerLink]="[{ outlets: { modal: ['cart'] } }]">
           <i class="fas fa-shopping-cart"></i>
           <span class="carrito-text">Carrito</span>
         </a>
