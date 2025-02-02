@@ -53,9 +53,9 @@ ul li a i {
 }
 
 /* Cuando se pasa el mouse sobre el carrito */
-.carrito:hover .carrito-text {
+/* .carrito:hover .carrito-text {
   display: inline;
-}
+} */
 
 /* Cambiar color del ícono y texto cuando se pasa el mouse por encima de cualquier <li> */
 ul li:hover a {

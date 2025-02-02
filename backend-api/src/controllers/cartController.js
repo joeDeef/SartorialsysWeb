@@ -70,8 +70,9 @@ export const getCart = async (req, res) => {
 export const updateProductQuantity = async (req, res) => {
   try {
     const { cartId } = req.params;
-    const { productCode, newQuantity } = req.body;
-
+    const { productCode } = req.query;
+    const { newQuantity } = req.body;
+    
     // Verificar si el carrito existe
     const cart = await Cart.findById(cartId)
       .populate('items.product') // Poblamos los productos en los ítems
@@ -131,7 +132,7 @@ export const updateProductQuantity = async (req, res) => {
 export const deleteProductFromCart = async (req, res) => {
   try {
     const { cartId } = req.params; // ID del carrito
-    const { productCode } = req.body; // Código del producto a eliminar
+    const { productCode } = req.query; // Código del producto a eliminar
 
     // Verificar si el carrito existe
     const cart = await Cart.findById(cartId)
