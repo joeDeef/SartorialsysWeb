@@ -122,6 +122,8 @@ export const getProduct = async (req, res) => {
   }
 };
 
+import Cart from '../models/Cart.js';  // Asegúrate de importar el modelo de carrito
+
 export const deleteProduct = async (req, res) => {
   try {
     const codeProduct = req.params.code;
@@ -131,13 +133,25 @@ export const deleteProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    // Eliminar producto de los carritos
+    const carts = await Cart.find({ 'items.product': productToDelete._id });
+
+    for (const cart of carts) {
+      // Elimina el item del carrito
+      cart.items = cart.items.filter(item => item.product.toString() !== productToDelete._id.toString());
+      
+      // Actualizar el totalPrice del carrito
+      await cart.updateTotalPrice();  // Este método actualizará el precio total
+    }
+
+    // Eliminar las imágenes asociadas al producto
     const imagesDirectory = path.join(process.cwd(), 'uploads');
     const imageNames = productToDelete.images;
 
     if (imageNames && imageNames.length > 0) {
       for (const imageName of imageNames) {
         const imagePath = path.join(imagesDirectory, imageName);
-
+        
         try {
           await fs.promises.unlink(imagePath);
         } catch (err) {
@@ -146,9 +160,10 @@ export const deleteProduct = async (req, res) => {
       }
     }
 
+    // Eliminar el producto de la base de datos
     await Product.findOneAndDelete({ code: codeProduct });
 
-    res.status(200).json({ message: "Product deleted successfully" });
+    res.status(200).json({ message: "Product deleted successfully and removed from all carts" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Internal server error" });
@@ -170,8 +185,14 @@ export const updateProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    const carts = await Cart.find({ 'items.product': productUpdated._id });
+
+    for (const cart of carts) {
+      await cart.updateTotalPrice();
+    }
+
     res.status(200).json({
-      message: "Product updated successfully",
+      message: "Product updated successfully and cart prices updated",
       product: productUpdated,
     });
   } catch (error) {
@@ -179,6 +200,7 @@ export const updateProduct = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 export const getImages = async (req, res) => {
   try {

@@ -67,6 +67,7 @@ export class ProductDetailComponent implements OnInit {
         response => {
           if (response.message === 'Product deleted successfully') {
             console.log('Producto eliminado correctamente');
+            location.reload();
             this._router.navigate(['/administration/products']); // Asegúrate de usar la ruta absoluta
           } else {
             console.error('Error: Respuesta inesperada del servidor');

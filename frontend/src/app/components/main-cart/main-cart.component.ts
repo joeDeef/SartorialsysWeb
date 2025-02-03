@@ -61,6 +61,7 @@ export class MainCartComponent implements OnInit {
   }
 
   goToCheckout() {
-    this._Router.navigate(['/checkout']);
+    this._Router.navigate(['/checkout'], { queryParams: { cartId: this.cartId } });
   }
+ 
 }
