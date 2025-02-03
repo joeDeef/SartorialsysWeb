@@ -128,8 +128,10 @@ export const loggingUser = async (req, res) => {
     res.json({
       token,
       user: {
+        id: user.id,
         name: user.name,
         last_name: user.last_name,
+        email: user.email,
         role: user.role,
         cartID: user.cart._id,
       }

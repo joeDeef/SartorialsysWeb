@@ -1,17 +1,17 @@
 <div class="container">
-    <!-- Menú Lateral -->
-    <div class="sidebar">
-      <ul>
-        <li (click)="selectSection('miCuenta')">
-          <i class="fas fa-user"></i> Mi Cuenta
-        </li>
-        <li (click)="selectSection('misPedidos')">
-          <i class="fas fa-box"></i> Mis Pedidos
-        </li>
-      </ul>
-    </div>
-  
-    <!-- Contenido Principal -->
+  <!-- Menú Lateral -->
+  <div class="sidebar">
+    <ul>
+      <li (click)="selectSection('miCuenta')">
+        <i class="fas fa-user"></i> Mi Cuenta
+      </li>
+      <li (click)="selectSection('misPedidos')">
+        <i class="fas fa-box"></i> Mis Pedidos
+      </li>
+    </ul>
+  </div>
+
+  <!-- Contenido Principal -->
     <div class="main-content">
       <!-- Mi Cuenta -->
       <div *ngIf="selectedSection === 'miCuenta'" class="section">
@@ -22,23 +22,41 @@
           <p><strong>Email:</strong> {{ user.email }}</p>
         </div>
       </div>
-  
-      <!-- Mis Pedidos -->
-      <div *ngIf="selectedSection === 'misPedidos'" class="section">
-        <h2>Mis Pedidos</h2>
-        <!--
-        <div *ngIf="orders?.length > 0; else noOrders">
-          <ul>
-            <li *ngFor="let order of orders">
-              Pedido #{{ order.id }} - Estado: {{ order.status }}
-            </li>
-          </ul>
-        </div>
-        <ng-template #noOrders>
-          <p>No tienes pedidos.</p>
-        </ng-template>
+
+    <div *ngIf="selectedSection === 'misPedidos'" class="section">
+      <h2>Mis Pedidos</h2>
+      <div *ngIf="orders && orders.length > 0; else noOrders">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Pedido #</th>
+              <th>Estado</th>
+              <th>Fecha del Pedido</th>
+              <th>Subtotal</th>
+              <th>Total</th>
+              <th>Detalles</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of orders">
+              <td>{{ order._id }}</td>
+              <td>{{ order.status }}</td>
+              <td>{{ order.orderDate | date:'dd/MM/yyyy' }}</td>
+              <td>${{ order.subtotal }}</td>
+              <td>${{ order.orderTotalPrice }}</td>
+              <td>
+                <button (click)="viewOrderDetails(order)">Ver Detalles</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      -->
+      <ng-template #noOrders>
+        <p>No tienes pedidos.</p>
+      </ng-template>
     </div>
   </div>
-  
+</div>
+
+<!-- Modal de Detalles del Pedido -->
+<app-order-detail-modal *ngIf="selectedOrder" [order]="selectedOrder" (close)="closeModal()"></app-order-detail-modal>

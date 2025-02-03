@@ -25,7 +25,9 @@ import { ManageUserComponent } from './components/manage-user/manage-user.compon
 import { CarritoComponent } from './components/aside-cart/carrito.component';
 import { MainCartComponent } from './components/main-cart/main-cart.component';
 import { CheckoutComponent } from './components/checkout/checkout.component';
-import { AccountComponent } from './components/account/account.component'
+import { AccountComponent } from './components/account/account.component';
+import { OrderDetailModalComponent } from './components/order-detail-modal/order-detail-modal.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,7 +47,8 @@ import { AccountComponent } from './components/account/account.component'
     CarritoComponent,
     MainCartComponent,
     CheckoutComponent,
-    AccountComponent
+    AccountComponent,
+    OrderDetailModalComponent,
   ],
   imports: [
     BrowserModule,
