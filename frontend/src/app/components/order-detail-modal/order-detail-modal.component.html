@@ -1,0 +1,84 @@
+<div class="modal">
+  <div class="modal-content">
+    <!-- Título de la Factura -->
+    <h2 class="invoice-title">Factura</h2>
+
+    <!-- Encabezado de la Factura -->
+    <div class="invoice-header">
+      <!-- Logo y Datos de la Empresa -->
+      <div class="header-left">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfP7K3AWLaMmCj1EzQsdgHabWDSp6bn1jw43NI9SUMXq5Z7Oyc5k2G2S8IazF5HR0ql1Y&usqp=CAU" alt="Logo" class="invoice-logo">
+        <div class="company-info">
+          <p><strong>RUC:</strong> 1799999999-001</p>
+          <p><strong>Razón Social:</strong> Trajes Hidalgo Plus</p>
+          <p><strong>Dirección:</strong> Ciudadela La Alborada, Ambato <br> Intersección de las calles Jácome Clavijo N23 y Rodrigo Vera.</p>
+        </div>
+      </div>
+
+      <!-- Información de la Factura (Número, Fecha, etc.) -->
+      <div class="header-right">
+        <p><strong>Número de Factura:</strong> 001-001-00001234</p>
+        <p><strong>Fecha:</strong> 03 de febrero de 2025</p>
+      </div>
+    </div>
+
+    <hr class="separator"> <!-- Línea separadora -->
+
+    <!-- Información del Cliente -->
+    <div class="customer-info">
+      <h3>Cliente</h3>
+      <div class="customer-info-details">
+        <div class="customer-info-column">
+          <p><strong>Nombre:</strong> {{ order.shippingInfo.fullName }}</p>
+          <p><strong>Cédula/RUC:</strong> {{ order.user }}</p>
+        </div>
+        <div class="customer-info-column">
+          <p><strong>Dirección:</strong> {{ order.shippingInfo.address }}</p>
+          <p><strong>Ciudad:</strong> {{ order.shippingInfo.city }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalles de los Artículos -->
+    <div class="order-details">
+      <h3>Detalles del Pedido</h3>
+      <table class="order-items-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of order.items">
+            <td>{{ item.code }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ item.unitPrice }}</td>
+            <td>${{ item.totalPrice }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Resumen de Precios -->
+    <div class="price-summary">
+      <p><strong>Subtotal:</strong> ${{ order.subtotal }}</p>
+      <div class="total-amount">
+        <p><strong>Total:</strong> ${{ order.orderTotalPrice }}</p>
+      </div>
+    </div>
+
+    <!-- Información de Pago -->
+    <div class="payment-info">
+      <h3>Información de Pago</h3>
+      <p><strong>Forma de Pago:</strong> Tarjeta de Crédito</p>
+    </div>
+
+    <!-- Botón para cerrar el modal -->
+    <span class="close-btn" (click)="closeModal()">&#x2715;</span>
+  </div>
+</div>

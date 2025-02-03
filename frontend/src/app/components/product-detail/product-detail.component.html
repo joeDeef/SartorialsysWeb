@@ -1,0 +1,48 @@
+<p>{{ product.category | uppercase }}</p>
+<ng-container *ngIf="!loading">
+  <div class="product-detail">
+    <!-- Imagen del producto -->
+    <div class="product-image">
+      <img
+        src="{{ url + '/uploads/' + urlImages }}"
+        alt="Camisa Pical Rosado"
+      />
+    </div>
+
+    <!-- Información del producto -->
+    <div class="product-info">
+      <h1>{{ product.name }}</h1>
+      <p>{{ product.price | currency }}</p>
+
+      <!-- Selección de talla -->
+      <select>
+        <option value="">Elegir</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+      </select>
+
+      <!-- Cantidad -->
+      <div class="quantity">
+        <button (click)="decrementar()">-</button>
+        <input type="number" value="{{ cantidad }}" readonly />
+        <button (click)="incrementar()">+</button>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="actions">
+        <button class="add-to-cart" (click)="addToCart()">Agregar al carrito</button>
+        <button class="buy-now">Realizar compra</button>
+      </div>
+      <!-- Botones adicionales -->
+      <div class="extra-actions">
+        <button class="delete" (click)="eliminarProducto(product.code)" *ngIf="isAdminRoute">Eliminar</button>
+        <button class="update" [routerLink]="['/administration/products/edit-product',product.code]"  *ngIf="isAdminRoute">
+          Actualizar
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngIf="loading"><i>loading information </i></ng-container>

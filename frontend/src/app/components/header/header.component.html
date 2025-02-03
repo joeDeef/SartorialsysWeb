@@ -6,17 +6,43 @@
     <p class="brand">Trajes Hidalgo Plus</p>
     <ul>
       <li><a [routerLink]="['/home']">Inicio</a></li>
-      <li><a [routerLink]="['/camisas']">Camisas</a></li>
-      <li><a [routerLink]="['/pantalones']">Pantalones</a></li>
-      <li><a [routerLink]="['/ternos']">Ternos</a></li>
-      <li><a [routerLink]="['/accesorios']">Accesorios</a></li>
-      <li>
+      <li><a [routerLink]="['/products/Camisa']">Camisas</a></li>
+      <li><a [routerLink]="['/products/Terno']">Ternos</a></li>
+      <li><a [routerLink]="['/products/Pantalón']">Pantalones</a></li>
+      <li><a [routerLink]="['/products/Accesorio']">Accesorios</a></li>
+
+      <!-- Solo se muestra si el usuario es Admin -->
+      <li *ngIf="isAdmin">
+        <a [routerLink]="['/administration']">Administración</a>
+      </li>
+
+      <!-- Si no está autenticado, se muestra "Iniciar Sesión" -->
+      <li *ngIf="!isAuthenticated">
         <a [routerLink]="['/login']">
           <i class="fas fa-user-circle"></i> Iniciar Sesion
         </a>
       </li>
+
+      <!-- Contenedor del menú de usuario -->
+      <li *ngIf="isAuthenticated" class="user-menu">
+        <div class="user-dropdown" (click)="toggleMenu()">
+          <i class="fas fa-user-circle"></i> {{ userName }}
+        </div>
+
+        <!-- Menú desplegable hacia abajo -->
+        <ul *ngIf="menuOpen" class="dropdown-menu">
+          <li (click)="goToProfile()">
+            <i class="fas fa-user"></i> Mi Perfil
+          </li>
+          <li (click)="logout()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </li>
+        </ul>
+      </li>
+
+      <!-- Opción del carrito -->
       <li class="carrito">
-        <a [routerLink]="['/carrito']">
+        <a [routerLink]="[{ outlets: { modal: ['cart'] } }]">
           <i class="fas fa-shopping-cart"></i>
           <span class="carrito-text">Carrito</span>
         </a>

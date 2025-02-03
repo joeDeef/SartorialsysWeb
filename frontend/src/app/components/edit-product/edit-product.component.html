@@ -1,0 +1,123 @@
+<ng-container *ngIf="!loading">
+  <div class="form-container">
+    <h2>Editar Producto</h2>
+    <form #productForm="ngForm" (ngSubmit)="guardarCambios()" class="form">
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="name">Nombre:</label>
+        <input
+          type="text"
+          id="name"
+          [(ngModel)]="product.name"
+          name="name"
+          #name="ngModel"
+          required
+          placeholder="Escribe el nombre del producto"
+          class="form-input"
+        />
+        <div class="error" *ngIf="name.invalid && name.touched">
+          <span *ngIf="name.errors?.['required']" class="error-message">El nombre es obligatorio.</span>
+        </div>
+      </div>
+
+      <!-- Precio -->
+      <div class="form-group">
+        <label for="price">Precio:</label>
+        <input
+          type="number"
+          id="price"
+          [(ngModel)]="product.price"
+          name="price"
+          #price="ngModel"
+          required
+          min="0"
+          placeholder="Introduce el precio"
+          class="form-input"
+        />
+        <div class="error" *ngIf="price.invalid && price.touched">
+          <span *ngIf="price.errors?.['required']" class="error-message">El precio es obligatorio.</span>
+          <span *ngIf="price.errors?.['min']" class="error-message">El precio no puede ser negativo.</span>
+        </div>
+      </div>
+
+      <!-- Categoría -->
+      <div class="form-group">
+        <label for="category">Categoría:</label>
+        <select
+          id="category"
+          [(ngModel)]="product.category"
+          name="category"
+          class="form-input"
+        >
+          <option value="" disabled selected>Selecciona una categoría</option>
+          <option value="Camisa">Camisa</option>
+          <option value="Accesorio">Accesorio</option>
+          <option value="Terno">Terno</option>
+          <option value="Chaqueta">Chaqueta</option>
+          <option value="Pantalón">Pantalón</option>
+        </select>
+      </div>
+
+      <!-- Talla -->
+      <div class="form-group">
+        <label for="size">Talla:</label>
+        <select
+          id="size"
+          [(ngModel)]="product.size"
+          name="size"
+          class="form-input"
+        >
+          <option value="" disabled selected>Selecciona una talla</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+        </select>
+      </div>
+
+      <!-- Cantidad -->
+      <div class="form-group">
+        <label for="amount">Cantidad:</label>
+        <input
+          type="number"
+          id="amount"
+          [(ngModel)]="product.amount"
+          name="amount"
+          #amount="ngModel"
+          required
+          min="0"
+          placeholder="Cantidad en inventario"
+          class="form-input"
+        />
+        <div class="error" *ngIf="amount.invalid && amount.touched">
+          <span *ngIf="amount.errors?.['required']" class="error-message">La cantidad es obligatoria.</span>
+          <span *ngIf="amount.errors?.['min']" class="error-message">La cantidad no puede ser negativa.</span>
+        </div>
+      </div>
+
+      <!-- Disponibilidad -->
+      <div class="form-group">
+        <label for="status">Disponible:</label>
+        <input
+          type="checkbox"
+          id="status"
+          [(ngModel)]="product.status"
+          name="status"
+          class="form-checkbox"
+        />
+        <span class="status-label">¿Está disponible?</span>
+      </div>
+
+      <!-- Botón -->
+      <div class="form-group">
+        <button type="submit" class="form-button" [disabled]="productForm.invalid">
+          Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="loading">
+  <p>Cargando producto...</p>
+</ng-container>

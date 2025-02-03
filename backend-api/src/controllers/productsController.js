@@ -1,12 +1,17 @@
 import Product from '../models/Product.js';
-import fs  from 'fs';
+import fs from 'fs';
 import path from 'path';
+import express from 'express';
+
+// Configuración para servir la carpeta 'uploads' como pública
+const app = express();
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 export const addProduct = async (req, res) => {
   try {
     const { code, name, price, category, size, amount, color } = req.body;
 
-    var product = new Product({
+    const product = new Product({
       code,
       name,
       price,
@@ -14,17 +19,17 @@ export const addProduct = async (req, res) => {
       size,
       amount,
       color,
-      status: req.body.status !== undefined ? req.body.status : (amount > 0 ? true : false),
+      status: req.body.status !== undefined ? req.body.status : amount > 0,
       images: []
     });
 
-    var productStored = await Product.create(product);
+    const productStored = await Product.create(product);
 
     if (!productStored) {
       return res.status(404).send({ message: 'The product was not saved' });
     }
 
-    return res.status(201).send({ message : "User created successfully", product: productStored });
+    return res.status(201).send({ message: "Product created successfully", product: productStored });
   } catch (error) {
     console.error(error.message);
 
@@ -42,30 +47,31 @@ export const getProducts = async (req, res) => {
   try {
     const products = await Product.find();
 
-    if(!products || products.length === 0) {
-      return res.status(204).json({ message: "No products found"});
+    if (!products || products.length === 0) {
+      return res.status(204).json({ message: "No products found" });
     }
 
-    res.status(200).json({ message: "Products retrieved successfully", products: products});
+    res.status(200).json({ message: "Products retrieved successfully", products });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ message: "Internal server error"});}
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 export const uploadImages = async (req, res) => {
   try {
-    var productCode = req.params.code;
-    var fileNames = [];
-    
-    if (req.files && req.files.image) {
-      var files = req.files.image;
+    const productCode = req.params.code;
+    const fileNames = [];
 
-      for (var file of files) {
-        var filePath = file.path;
-        var fileSplit = filePath.split('\\');
-        var fileName = fileSplit[fileSplit.length - 1];
-        var extSplit = fileName.split('.');
-        var fileExt = extSplit[1];
+    if (req.files && req.files.image) {
+      const files = req.files.image;
+
+      for (const file of files) {
+        const filePath = file.path;
+        const fileSplit = filePath.split('\\');
+        const fileName = fileSplit[fileSplit.length - 1];
+        const extSplit = fileName.split('.');
+        const fileExt = extSplit[1];
 
         if (['png', 'jpg', 'jpeg', 'gif', 'PNG'].includes(fileExt)) {
           fileNames.push(fileName);
@@ -77,9 +83,9 @@ export const uploadImages = async (req, res) => {
       }
 
       if (fileNames.length > 0) {
-        var productUpdated = await Product.findOneAndUpdate(
-          { code: productCode }, 
-          { $push: { images: { $each: fileNames } } }, 
+        const productUpdated = await Product.findOneAndUpdate(
+          { code: productCode },
+          { $push: { images: { $each: fileNames } } },
           { new: true }
         );
 
@@ -96,24 +102,27 @@ export const uploadImages = async (req, res) => {
     }
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ message: "Internal server error"});;
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 export const getProduct = async (req, res) => {
   try {
     const codeProduct = req.params.code;
-    const product = await Product.find({ code: codeProduct});
+    const product = await Product.findOne({ code: codeProduct });
 
-    if(!product || product.length === 0) {
-      return res.status(404).json({ message: "No product found"});
+    if (!product) {
+      return res.status(404).json({ message: "No product found" });
     }
 
     res.status(200).json(product);
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ message: "Internal server error"});}
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
+
+import Cart from '../models/Cart.js';  // Asegúrate de importar el modelo de carrito
 
 export const deleteProduct = async (req, res) => {
   try {
@@ -124,26 +133,37 @@ export const deleteProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Usamos process.cwd() para obtener el directorio de trabajo actual
-    const imagesDirectory = path.join(process.cwd(), 'uploads');
+    // Eliminar producto de los carritos
+    const carts = await Cart.find({ 'items.product': productToDelete._id });
 
-    // Eliminar las imágenes asociadas
+    for (const cart of carts) {
+      // Elimina el item del carrito
+      cart.items = cart.items.filter(item => item.product.toString() !== productToDelete._id.toString());
+      
+      // Actualizar el totalPrice del carrito
+      await cart.updateTotalPrice();  // Este método actualizará el precio total
+    }
+
+    // Eliminar las imágenes asociadas al producto
+    const imagesDirectory = path.join(process.cwd(), 'uploads');
     const imageNames = productToDelete.images;
+
     if (imageNames && imageNames.length > 0) {
       for (const imageName of imageNames) {
         const imagePath = path.join(imagesDirectory, imageName);
-
+        
         try {
-          await fs.promises.unlink(imagePath);  // Usamos fs.unlink para eliminar el archivo
+          await fs.promises.unlink(imagePath);
         } catch (err) {
           console.error(`Failed to delete image: ${imagePath}`, err.message);
         }
       }
     }
 
+    // Eliminar el producto de la base de datos
     await Product.findOneAndDelete({ code: codeProduct });
 
-    res.status(200).json({ message: "Product deleted successfully" });
+    res.status(200).json({ message: "Product deleted successfully and removed from all carts" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Internal server error" });
@@ -165,8 +185,14 @@ export const updateProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    const carts = await Cart.find({ 'items.product': productUpdated._id });
+
+    for (const cart of carts) {
+      await cart.updateTotalPrice();
+    }
+
     res.status(200).json({
-      message: "Product updated successfully",
+      message: "Product updated successfully and cart prices updated",
       product: productUpdated,
     });
   } catch (error) {
@@ -175,38 +201,23 @@ export const updateProduct = async (req, res) => {
   }
 };
 
+
 export const getImages = async (req, res) => {
   try {
     const productCode = req.params.code;
-
     const product = await Product.findOne({ code: productCode });
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    var imagePaths = product.images;
-
-    var images = [];
-
-    for (let file of imagePaths) {
-      var path_file = "./uploads/" + file;
-
-      var exists = await fs.promises.access(path_file)
-        .then(() => true)
-        .catch(() => false);
-
-      if (exists) {
-        images.push(path.resolve(path_file));
-      }
-    }
+    const images = product.images.map(image => `${req.protocol}://${req.get('host')}/uploads/${image}`);
 
     if (images.length > 0) {
-      return res.json({ images });
+      return res.status(200).json({ images });
     } else {
-      return res.status(200).send({ message: 'No images found' });
+      return res.status(200).json({ message: 'No images found' });
     }
-
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Internal server error" });
