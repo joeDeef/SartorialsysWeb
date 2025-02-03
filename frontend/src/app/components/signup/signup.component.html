@@ -42,6 +42,8 @@
         <!-- Botón de registro -->
         <button type="submit" class="register-button">Crear Cuenta</button>
       </form>
+      
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
 
       <p class="mt-4">
         ¿Ya tienes una cuenta?

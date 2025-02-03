@@ -1,0 +1,44 @@
+<div class="container">
+    <!-- Menú Lateral -->
+    <div class="sidebar">
+      <ul>
+        <li (click)="selectSection('miCuenta')">
+          <i class="fas fa-user"></i> Mi Cuenta
+        </li>
+        <li (click)="selectSection('misPedidos')">
+          <i class="fas fa-box"></i> Mis Pedidos
+        </li>
+      </ul>
+    </div>
+  
+    <!-- Contenido Principal -->
+    <div class="main-content">
+      <!-- Mi Cuenta -->
+      <div *ngIf="selectedSection === 'miCuenta'" class="section">
+        <h2>Mi Cuenta</h2>
+        <div class="user-info">
+          <p><strong>Nombre:</strong> {{ user.name }}</p>
+          <p><strong>Apellido:</strong> {{ user.last_name }}</p>
+          <p><strong>Email:</strong> {{ user.email }}</p>
+        </div>
+      </div>
+  
+      <!-- Mis Pedidos -->
+      <div *ngIf="selectedSection === 'misPedidos'" class="section">
+        <h2>Mis Pedidos</h2>
+        <!--
+        <div *ngIf="orders?.length > 0; else noOrders">
+          <ul>
+            <li *ngFor="let order of orders">
+              Pedido #{{ order.id }} - Estado: {{ order.status }}
+            </li>
+          </ul>
+        </div>
+        <ng-template #noOrders>
+          <p>No tienes pedidos.</p>
+        </ng-template>
+      </div>
+      -->
+    </div>
+  </div>
+  
