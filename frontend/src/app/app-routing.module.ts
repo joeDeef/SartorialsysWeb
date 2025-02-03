@@ -14,6 +14,7 @@ import { ManageUserComponent } from './components/manage-user/manage-user.compon
 import { CarritoComponent } from './components/aside-cart/carrito.component';
 import { MainCartComponent } from './components/main-cart/main-cart.component';
 import { CheckoutComponent } from './components/checkout/checkout.component';
+import { AccountComponent } from './components/account/account.component';
 
 const routes: Routes = [
   // Default route
@@ -33,6 +34,7 @@ const routes: Routes = [
   // Authentication routes
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
+  { path: 'account', component: AccountComponent },
 
   // Product administration routes
   { path: 'administration', component: AdministationComponent },

@@ -24,8 +24,7 @@
         type="{{passwordFieldType}}" 
         id="password"
         [(ngModel)]="user.password" 
-        name="password" 
-        required 
+        name="password"  
         #password="ngModel" 
         placeholder="Ingresa la contraseña" 
       />
@@ -36,7 +35,6 @@
         <i class="fa" [ngClass]="passwordFieldType === 'password' ? 'fa-eye' : 'fa-eye-slash'"></i>
       </button>
     </div>
-    <div class="error" *ngIf="password.invalid && password.touched">La contraseña es obligatoria</div>
 
     <!-- Rol (select) -->
     <label for="role">Rol:</label>
@@ -48,4 +46,5 @@
 
     <button type="submit" [disabled]="userForm.invalid">Agregar Usuario</button>
   </form>
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
 </div>

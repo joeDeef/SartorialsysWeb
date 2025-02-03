@@ -24,7 +24,8 @@ import { ManageUserComponent } from './components/manage-user/manage-user.compon
 
 import { CarritoComponent } from './components/aside-cart/carrito.component';
 import { MainCartComponent } from './components/main-cart/main-cart.component';
-import { CheckoutComponent } from './components/checkout/checkout.component'
+import { CheckoutComponent } from './components/checkout/checkout.component';
+import { AccountComponent } from './components/account/account.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,7 +44,8 @@ import { CheckoutComponent } from './components/checkout/checkout.component'
     ManageUserComponent,
     CarritoComponent,
     MainCartComponent,
-    CheckoutComponent
+    CheckoutComponent,
+    AccountComponent
   ],
   imports: [
     BrowserModule,

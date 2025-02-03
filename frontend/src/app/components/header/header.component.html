@@ -13,7 +13,7 @@
 
       <!-- Solo se muestra si el usuario es Admin -->
       <li *ngIf="isAdmin">
-        <a [routerLink]="['/administration']">Administracion</a>
+        <a [routerLink]="['/administration']">Administración</a>
       </li>
 
       <!-- Si no está autenticado, se muestra "Iniciar Sesión" -->
@@ -23,10 +23,21 @@
         </a>
       </li>
 
-      <!-- Si está autenticado, mostramos el nombre del usuario y la opción de cerrar sesión -->
-      <li *ngIf="isAuthenticated">
-        <span>Bienvenido, {{ userName }}</span>
-        <a href="#" (click)="logout()">Cerrar Sesión</a>
+      <!-- Contenedor del menú de usuario -->
+      <li *ngIf="isAuthenticated" class="user-menu">
+        <div class="user-dropdown" (click)="toggleMenu()">
+          <i class="fas fa-user-circle"></i> {{ userName }}
+        </div>
+
+        <!-- Menú desplegable hacia abajo -->
+        <ul *ngIf="menuOpen" class="dropdown-menu">
+          <li (click)="goToProfile()">
+            <i class="fas fa-user"></i> Mi Perfil
+          </li>
+          <li (click)="logout()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </li>
+        </ul>
       </li>
 
       <!-- Opción del carrito -->

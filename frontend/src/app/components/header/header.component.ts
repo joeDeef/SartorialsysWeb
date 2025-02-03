@@ -1,4 +1,5 @@
 import { Component, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -17,8 +18,9 @@ export class HeaderComponent {
   isAuthenticated: boolean = false;
   isAdmin: boolean = false;
   cartID: string = '';
+  menuOpen: boolean = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   // Se ejecuta al cargar el componente - Verificamos si el usuario está autenticado
   ngOnInit(): void {
@@ -58,5 +60,15 @@ export class HeaderComponent {
   logout(): void {
     this.authService.logout();
     this.checkAuthentication();  // Actualizamos el estado después de hacer logout
+    this.router.navigate(['/home']); // Asegúrate de que '/perfil' es la ruta correcta
+  }
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  goToProfile() {
+    this.menuOpen = false; // Cierra el menú
+    this.router.navigate(['/account']); // Asegúrate de que '/perfil' es la ruta correcta
   }
 }

@@ -54,9 +54,14 @@
         #price="ngModel"
         [(ngModel)]="product.price"
         required
+        min="0"
         placeholder="Ingresa el precio"
         class="form-input"
       />
+      <div class="error" *ngIf="price.invalid && price.touched">
+        <span *ngIf="price.errors?.['required']" class="error-message">El precio es obligatorio.</span>
+        <span *ngIf="price.errors?.['min']" class="error-message">El precio no puede ser negativo.</span>
+      </div>
     </div>
 
     <!-- Categoría -->
@@ -110,9 +115,14 @@
         #amount="ngModel"
         [(ngModel)]="product.amount"
         required
+        min="0"
         placeholder="Cantidad disponible"
         class="form-input"
       />
+      <div class="error" *ngIf="amount.invalid && amount.touched">
+        <span *ngIf="amount.errors?.['required']" class="error-message">La cantidad es obligatoria.</span>
+        <span *ngIf="amount.errors?.['min']" class="error-message">La cantidad no puede ser negativa.</span>
+      </div>
     </div>
 
     <!-- Color -->

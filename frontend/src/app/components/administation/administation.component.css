@@ -57,3 +57,14 @@
   background-color: #e64a19;
   transform: translateY(-5px);
 }
+
+/* User Button */
+.button.blue {
+  background-color: lightseagreen;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.button.blue:hover {
+  background-color: lightseagreen;
+  transform: translateY(-5px);
+}
