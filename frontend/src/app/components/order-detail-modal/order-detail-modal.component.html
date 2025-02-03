@@ -1,28 +1,42 @@
 <div class="modal">
   <div class="modal-content">
+    <!-- Título de la Factura -->
+    <h2 class="invoice-title">Factura</h2>
+
     <!-- Encabezado de la Factura -->
     <div class="invoice-header">
+      <!-- Logo y Datos de la Empresa -->
       <div class="header-left">
-        <img src="./assets/logo.jpg" alt="Logo" class="invoice-logo"> <!-- Aquí puedes agregar el logo -->
-        <h2>Factura</h2>
-        <p><strong>RUC:</strong> 1799999999001</p>
-        <p><strong>Razón Social:</strong> Tienda Ejemplo S.A.</p>
-        <p><strong>Dirección:</strong> Av. Principal #123, Quito, Ecuador</p>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfP7K3AWLaMmCj1EzQsdgHabWDSp6bn1jw43NI9SUMXq5Z7Oyc5k2G2S8IazF5HR0ql1Y&usqp=CAU" alt="Logo" class="invoice-logo">
+        <div class="company-info">
+          <p><strong>RUC:</strong> 1799999999-001</p>
+          <p><strong>Razón Social:</strong> Trajes Hidalgo Plus</p>
+          <p><strong>Dirección:</strong> Ciudadela La Alborada, Ambato <br> Intersección de las calles Jácome Clavijo N23 y Rodrigo Vera.</p>
+        </div>
       </div>
+
+      <!-- Información de la Factura (Número, Fecha, etc.) -->
       <div class="header-right">
-        <p><strong>Fecha:</strong> {{ order.orderDate | date:'dd/MM/yyyy' }}</p>
-        <p><strong>Factura N°:</strong> {{ order._id }}</p>
-        <p><strong>Autorización:</strong> 001-000000000</p>
+        <p><strong>Número de Factura:</strong> 001-001-00001234</p>
+        <p><strong>Fecha:</strong> 03 de febrero de 2025</p>
       </div>
     </div>
+
+    <hr class="separator"> <!-- Línea separadora -->
 
     <!-- Información del Cliente -->
     <div class="customer-info">
       <h3>Cliente</h3>
-      <p><strong>Nombre:</strong> {{ order.shippingInfo.fullName }}</p>
-      <p><strong>Cédula/RUC:</strong> {{ order.user }}</p>
-      <p><strong>Dirección:</strong> {{ order.shippingInfo.address }}</p>
-      <p><strong>Ciudad:</strong> {{ order.shippingInfo.city }}</p>
+      <div class="customer-info-details">
+        <div class="customer-info-column">
+          <p><strong>Nombre:</strong> {{ order.shippingInfo.fullName }}</p>
+          <p><strong>Cédula/RUC:</strong> {{ order.user }}</p>
+        </div>
+        <div class="customer-info-column">
+          <p><strong>Dirección:</strong> {{ order.shippingInfo.address }}</p>
+          <p><strong>Ciudad:</strong> {{ order.shippingInfo.city }}</p>
+        </div>
+      </div>
     </div>
 
     <!-- Detalles de los Artículos -->

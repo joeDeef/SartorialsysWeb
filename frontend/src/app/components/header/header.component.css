@@ -80,6 +80,7 @@ ul li:hover i {
   align-items: center;
   gap: 5px;
   font-weight: bold;
+  font-size: 22px; /* Aumenta el tamaño del texto */
 }
 
 .dropdown-menu {
@@ -102,7 +103,7 @@ ul li:hover i {
   padding: 10px;
   cursor: pointer;
   text-align: left;
-  font-size: 14px;
+  font-size: 18px;
   transition: background 0.3s;
 }
 

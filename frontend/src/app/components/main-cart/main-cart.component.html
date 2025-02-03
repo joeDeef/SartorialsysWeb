@@ -7,7 +7,7 @@
         <h2>Mi carrito</h2>
         <div class="cart-items-container">
             <div *ngFor="let item of cart.items" class="cart-item">
-                <img [src]="item.product.images[0]" alt="{{ item.product.name }}" />
+                <img [src]="productImages[item.product.code]" *ngIf="productImages[item.product.code]" alt="{{ item.product.name }}">
                 <div class="item-details">
                     <h3>{{ item.product.name }}</h3>
                     <p>{{ item.product.price | currency }}</p>

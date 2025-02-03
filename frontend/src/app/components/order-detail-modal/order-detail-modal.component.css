@@ -25,25 +25,30 @@ h2, h3 {
   margin-bottom: 10px;
 }
 
+.invoice-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .invoice-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
-  border-bottom: 2px solid #000;
-  padding-bottom: 15px;
 }
 
 .header-left {
-  max-width: 50%;
+  display: flex;
+  align-items: center;
 }
 
-.header-left h2 {
-  margin: 0;
-  font-size: 24px;
+.invoice-logo {
+  width: 100px;
+  height: auto;
+  margin-right: 20px;
 }
 
-.header-left p {
-  font-size: 14px;
+.company-info p {
+  margin: 5px 0;
 }
 
 .header-right {
@@ -51,12 +56,23 @@ h2, h3 {
   font-size: 14px;
 }
 
-.customer-info, .order-details, .price-summary, .payment-info {
+.separator {
+  margin: 20px 0;
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+
+.customer-info {
   margin-bottom: 20px;
 }
 
-.customer-info p, .price-summary p, .payment-info p {
-  font-size: 14px;
+.customer-info-details {
+  display: flex;
+  justify-content: space-between;
+}
+
+.customer-info-column p {
+  margin: 5px 0;
 }
 
 .order-items-table {
@@ -75,6 +91,11 @@ h2, h3 {
   background-color: #f4f4f4;
 }
 
+.price-summary {
+  font-size: 16px;
+  margin-top: 20px;
+}
+
 .total-amount {
   font-size: 20px;
   color: #e74c3c;
@@ -82,8 +103,8 @@ h2, h3 {
   margin-top: 10px;
 }
 
-.price-summary {
-  font-size: 16px;
+.payment-info {
+  font-size: 14px;
   margin-top: 20px;
 }
 
@@ -98,9 +119,4 @@ h2, h3 {
 
 .close-btn:hover {
   color: #e74c3c;
-}
-
-.invoice-logo {
-  width: 120px;
-  height: auto;
 }

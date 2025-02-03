@@ -4,6 +4,7 @@ import { Cart } from '../../models/cart.model';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
 import { Router } from '@angular/router';
+import { ProductService } from 'src/app/services/product.service';
 
 @Component({
   selector: 'app-carrito',
@@ -16,9 +17,9 @@ export class CarritoComponent implements OnInit {
   public url: string;
   public cart: Cart = { items: [], totalPrice: 0 };
   public cartId: string = '';
-  // public cartId: string = '64c4e8d99b5120625c00f9ab';
+  public productImages: { [key: string]: string } = {};  // Objeto para almacenar las imágenes
 
-  constructor(private _CartService: CartService, private _AuthService: AuthService, private _Router: Router) {
+  constructor(private _CartService: CartService, private _AuthService: AuthService, private _Router: Router, private _ProductService:ProductService) {
     this.url = Global.url;
   }
 
@@ -56,12 +57,30 @@ export class CarritoComponent implements OnInit {
     this._CartService.getCart(this.cartId).subscribe(
       (response) => {
         this.cart = response.cart;
+        this.loadProductImages();  // Carga las imágenes cuando el carrito se carga
       },
       (error) => {
         console.error('Error al cargar el carrito:', error);
       }
     );
   }
+
+      // Método para obtener la primera imagen de cada producto
+      loadProductImages() {
+        this.cart.items.forEach((item) => {
+          this._ProductService.getImages(item.product.code).subscribe(
+            (response) => {
+              if (response.images && response.images.length > 0) {
+                // Asigna la primera imagen al objeto productImages
+                this.productImages[item.product.code] = response.images[0];
+              }
+            },
+            (error) => {
+              console.error('Error al obtener las imágenes del producto:', error);
+            }
+          );
+        });
+      }
 
   updateQuantity(productCode: string, quantity: number) {
     this._CartService

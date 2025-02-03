@@ -17,7 +17,7 @@
 }
 
 .search-label {
-  font-size: 20px; /* Tamaño del texto aumentado */
+  font-size: 25px; /* Tamaño del texto aumentado */
   font-weight: bold; /* Si quieres que el texto sea más grueso */
 }
 
@@ -25,7 +25,7 @@
 .search-input {
   width: 60%;
   padding: 12px;
-  font-size: 16px;
+  font-size: 20px;
   border-radius: 8px;
   border: 1px solid #ccc;
   box-sizing: border-box;
@@ -42,7 +42,7 @@
   background-color: #4caf50; /* Color verde suave */
   color: #fff;
   padding: 12px 20px;
-  font-size: 16px;
+  font-size: 20px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -71,7 +71,7 @@
 .user-table th, .user-table td {
   padding: 12px;
   text-align: left;
-  font-size: 16px;
+  font-size: 18px;
   border-bottom: 1px solid #f4f4f4;
 }
 
@@ -106,7 +106,7 @@
   }
 
   .user-table th, .user-table td {
-    font-size: 14px;
+    font-size: 18px;
   }
 
   .user-table-container {

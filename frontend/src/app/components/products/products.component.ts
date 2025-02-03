@@ -8,33 +8,58 @@ import { Global } from '../../services/global.service';
   selector: 'app-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
-  providers:[ApiService]
+  providers: [ApiService]
 })
 export class ProductsComponent implements OnInit {
   currentCategory: string = ''; // Almacena la categoría actual
-  public url:string;
+  public url: string;
   productsList: Product[] = [];
   filteredProducts: Product[] = [];
   isAll: boolean = true;
-  isAdminRoute: boolean = false; //para ver si la ruta contine administrarion
+  isAdminRoute: boolean = false;
+  priceFilter: number = 0; // Valor inicial del filtro de precio
+  priceCondition: string = 'greater'; // Condición por defecto: Mayor o igual
+  filteredProductsMenu: Product[] = [];
+
   constructor(private _apiService: ApiService, private route: ActivatedRoute, private _router: Router) {
-    this.url=Global.url;
-   }
+    this.url = Global.url;
+  }
+
+  // Método para aplicar el filtro de precio
+  applyPriceFilter() {
+    // Aplica el filtro de precio según la condición seleccionada
+    if (this.priceCondition === 'greater') {
+      this.filteredProducts = this.productsList.filter(product => product.price >= this.priceFilter);
+    } else {
+      this.filteredProducts = this.productsList.filter(product => product.price <= this.priceFilter);
+    }
+
+    // Filtra por categoría después de filtrar por precio
+    if (!this.isAll) {
+      this.filteredProducts = this.filteredProducts.filter(
+        product => product.category === this.currentCategory
+      );
+    }
+  }
 
   ngOnInit(): void {
-     // Verifica si la ruta actual contiene "administration"
-     this._router.events.subscribe(() => {
+    // Verifica si la ruta actual contiene "administration"
+    this._router.events.subscribe(() => {
       this.isAdminRoute = this._router.url.includes('administration');
     });
+    
     this.route.paramMap.subscribe(params => {
       this.currentCategory = params.get('category') || '';
-      this.isAll = this.currentCategory === ''; 
+      this.isAll = this.currentCategory === ''; // Si es la ruta de "todos los productos"
+      
+      // Obtén los productos desde el servicio
       this._apiService.getProducts().subscribe((data: IProduct) => {
         this.productsList = data.products;
-        this.filterProducts();
+        this.applyPriceFilter(); // Aplica los filtros después de obtener los productos
       });
     });
   }
+
   // Filtrar productos según la categoría actual
   filterProducts(): void {
     if (this.isAll) {
@@ -46,5 +71,13 @@ export class ProductsComponent implements OnInit {
         product => product.category === this.currentCategory
       );
     }
+
+    this.applyPriceFilter(); // Aplica también el filtro de precio
+  }
+
+  // Método para manejar el cambio en el precio (rango)
+  onPriceChange(newPrice: number) {
+    this.priceFilter = newPrice;
+    this.applyPriceFilter(); // Aplica el filtro de precio cada vez que cambia el rango
   }
 }

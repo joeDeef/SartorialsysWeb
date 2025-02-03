@@ -1,30 +1,61 @@
-<div>
-  <div class="buttons">
-    <button *ngIf="isAdminRoute" class="add-button" [routerLink]="['/administration/products/create-product']">Agregar Producto</button>
-  </div>
-  <!-- Título dinámico basado en la categoría -->
-  <h1 *ngIf="isAll; else categoryTitle">Todos los Productos</h1>
-  <ng-template #categoryTitle>
-    <h1>Productos de {{ currentCategory | titlecase }}</h1>
-  </ng-template>
+<div class="container-wrapper">
+  <!-- Menú a la izquierda -->
+  <div class="sidebar">
+    <h2>Explorar por</h2>
+    <ul>
+      <li><a [routerLink]="['/products']">Todos los productos</a></li>
+      <li><a [routerLink]="['/products/Accesorio']">Accesorios</a></li>
+      <li><a [routerLink]="['/products/Camisa']">Camisas</a></li>
+      <li><a [routerLink]="['/products/Pantalón']">Pantalones</a></li>
+      <li><a [routerLink]="['/products/Terno']">Trajes</a></li>
+    </ul>
 
-  <!-- Lista de productos -->
-  <div class="container">
-    <a
-      class="product-card"
-      *ngFor="let product of filteredProducts"
-      [routerLink]="isAdminRoute 
+    <h3>Filtrar por</h3>
+    
+    <!-- Filtro de Precio -->
+    <label for="price-range">Precio</label>
+    
+    <!-- Selector de 'Mayor o igual' / 'Menor o igual' -->
+    <select id="priceCondition" [(ngModel)]="priceCondition" (change)="applyPriceFilter()">
+      <option value="greater">Mayor o igual</option>
+      <option value="less">Menor o igual</option>
+    </select>
+
+    <!-- Contenedor para el precio y la barra -->
+    <div class="price-container">
+      <span class="currency">${{ priceFilter.toFixed(2) }}</span>
+      <div class="range">
+        <input type="range" id="price-range" name="price" min="0" max="100" step="5" [(ngModel)]="priceFilter" (change)="onPriceChange(priceFilter)">
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de productos a la derecha -->
+  <div class="products">
+    <div class="buttons">
+      <button *ngIf="isAdminRoute" class="add-button" [routerLink]="['/administration/products/create-product']">Agregar Producto</button>
+    </div>
+
+    <div class="product-header">
+      <h1 *ngIf="isAll; else categoryTitle">Todos los Productos</h1><br>
+      <ng-template #categoryTitle>
+        <h1>Productos de {{ currentCategory | titlecase }}</h1><br>
+      </ng-template>
+      <p>{{ filteredProducts.length }} productos</p>
+    </div>
+
+    <div class="container">
+      <a class="product-card" *ngFor="let product of filteredProducts" [routerLink]="isAdminRoute 
         ? ['/administration/products', product.code] 
-        : ['/products', product.category, product.code]"
-    >
-      <img src="{{url+'/uploads/'+product.images[0]}}" [alt]="product.name" />
-      <h3>{{ product.name }}</h3>
-      <p>{{ product.price | currency }}</p>
-    </a>
-  </div>
+        : ['/products', product.category, product.code]">
+        <img src="{{url+'/uploads/'+product.images[0]}}" [alt]="product.name" />
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.price | currency }}</p>
+      </a>
+    </div>
 
-  <!-- Mensaje si no hay productos -->
-  <div *ngIf="filteredProducts.length === 0" class="no-products">
-    <p>No hay productos disponibles para esta categoría.</p>
+    <div *ngIf="filteredProducts.length === 0" class="no-products">
+      <p>No hay productos disponibles para esta categoría.</p>
+    </div>
   </div>
 </div>

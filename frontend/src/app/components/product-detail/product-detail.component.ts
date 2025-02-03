@@ -38,7 +38,6 @@ export class ProductDetailComponent implements OnInit {
             this.product = data; // Toma el primer elemento del array
             console.log(this.product); // Imprime el producto completo
             this.urlImages = this.product.images[0];
-            console.log(this.urlImages);
             this.loading = false;
           },
           error: (error: any) => {
