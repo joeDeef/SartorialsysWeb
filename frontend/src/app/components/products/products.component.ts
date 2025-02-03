@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IProduct, Product } from '../models/product.model';
-import { ApiService } from '../services/api.service';
-import { Global } from '../services/global.service';
+import { IProduct, Product } from '../../models/product.model';
+import { ApiService } from '../../services/api.service';
+import { Global } from '../../services/global.service';
 
 @Component({
   selector: 'app-products',

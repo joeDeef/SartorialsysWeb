@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { IProduct, NewProduct, Product } from '../models/product.model';
-import { ApiService } from '../services/api.service';
-import { Global } from '../services/global.service';
-import { CartService } from '../services/cart.service';
+import { IProduct, NewProduct, Product } from '../../models/product.model';
+import { ApiService } from '../../services/api.service';
+import { Global } from '../../services/global.service';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-product-detail',
