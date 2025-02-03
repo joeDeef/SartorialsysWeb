@@ -13,7 +13,7 @@
 }
 
 .sidebar h2, .sidebar h3 {
-  font-size: 22px; /* Aumentamos el tamaño de las letras */
+  font-size: 20px; /* Aumentamos el tamaño de las letras */
   font-weight: bold;
   margin-bottom: 15px;
 }
@@ -30,7 +30,7 @@
 .sidebar ul li a {
   text-decoration: none;
   color: #333;
-  font-size: 18px; /* Aumentamos el tamaño de las letras */
+  font-size: 17px;
   display: block;
 }
 
@@ -44,7 +44,7 @@
 }
 
 .sidebar label {
-  font-size: 18px; /* Aumentamos el tamaño de las letras */
+  font-size: 15px; /* Aumentamos el tamaño de las letras */
   margin-bottom: 5px;
   display: block;
 }
@@ -57,14 +57,14 @@
 }
 
 .price-container span {
-  font-size: 1.4em;
+  font-size: 12px;
   font-weight: bold;
   color: #007bff;
 }
 
 .price-container .currency {
   margin-left: 5px;
-  font-size: 1.4em;
+  font-size: 19px;
   color: #333;
 }
 
@@ -76,7 +76,7 @@
 select {
   width: 100%;
   padding: 10px;
-  font-size: 1.2em; /* Aumentamos el tamaño de las letras */
+  font-size: 14px; /* Aumentamos el tamaño de las letras */
   margin-bottom: 10px;
   border-radius: 12px; /* Diseño flotante con bordes redondeados */
   border: 1px solid #ccc;
@@ -176,12 +176,12 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .product-card h3 {
-  font-size: 20px;
+  font-size: 21px;
   margin: 10px 0;
 }
 
 .product-card p {
-  font-size: 18px;
+  font-size: 19px;
   color: #333;
   margin: 10px 0;
 }
