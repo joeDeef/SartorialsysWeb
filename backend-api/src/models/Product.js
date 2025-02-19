@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
   code: {
     type: String,
     required: true,
@@ -8,6 +8,11 @@ const userSchema = new mongoose.Schema({
   },
   name: {
     type: String, 
+    required: true
+  },
+  category: { 
+    type: String, 
+    enum: ['Shirt', 'Accessory', 'Suit', 'Jacket', 'Pants'], 
     required: true 
   },
   price: { 
@@ -15,30 +20,31 @@ const userSchema = new mongoose.Schema({
     required: true, 
     min: [0, 'Price must be greater than or equal to 0']
   },
-  category: { 
-    type: String, 
-    enum: ['Camisa', 'Accesorio', 'Terno', 'Chaqueta', 'Pantalón'], 
-    required: true 
-  },
-  size: { 
-    type: String, 
-    enum: ['S', 'M', 'L', 'XL'],
-    required: function() { return this.category !== 'Accesorio'; }
-  },
-  amount: { 
-    type: Number, 
-    required: true,
-    min: [0, 'Amount must be greater than or equal to 0']
-  },
-  status: { 
-    type: Boolean,
-    enum: [true, false], // Disponible o Agotado
-  },
-  color: { 
-    type: String, 
-    required: true 
-  },
+  inventory: [
+    {
+      size: { 
+        type: String, 
+        enum: ['S', 'M', 'L', 'XL'],
+        required: false
+      },
+      color: [
+        {
+          name: { type: String, required: true },
+          amount: { 
+            type: Number, 
+            required: true,
+            min: [0, 'Amount must be greater than or equal to 0']
+          },
+          status: { 
+            type: Boolean, 
+            enum: [true, false], // Available or Not Available
+            default: true 
+          }
+        }
+      ]
+    }
+  ],
   images: [String]
 });
 
-export default mongoose.model("Product", userSchema);
+export default mongoose.model("Product", productSchema);

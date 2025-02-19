@@ -2,130 +2,112 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Cart from '../models/Cart.js';
+import variables  from '../config/env.js';
 
-const SECRET_KEY = 'SARTORIALSYS';
+const sendErrorResponse = (res, message, statusCode = 500) => {
+  console.error(message);
+  res.status(statusCode).json({ message });
+};
+
+const sendSuccessResponse = (res, message, data, statusCode = 200) => {
+  res.status(statusCode).json({ message, data });
+};
 
 export const createUser = async (req, res) => {
   try {
     const user = req.body;
     const userCreate = await User.create(user);
-    res.status(201).json({message: "User created successfully", userCreate});
+    sendSuccessResponse(res, "User created successfully", userCreate, 201);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: "Internal server error"});
+    sendErrorResponse(res, error.message);
   }
 };
 
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find();
-
-    if(!users || users.length === 0) {
-      return res.status(204).json({ message: "No users found"});
-    }
-
-    res.status(200).json({message: "Users retrieved successfully", users});
+    if (!users.length) return sendErrorResponse(res, "No users found", 204);
+    sendSuccessResponse(res, "Users retrieved successfully", users);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: "Internal server error"});  }
+    sendErrorResponse(res, error.message);
+  }
 };
 
 export const getUser = async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     const user = await User.findById(id).select('-password');
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json(user);
+    if (!user) return sendErrorResponse(res, "User not found", 404);
+    sendSuccessResponse(res, "User retrieved successfully", user);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: "Internal server error" });
+    sendErrorResponse(res, error.message);
   }
 };
 
 export const updateUser = async (req, res) => {
   try {
-    const id = req.params.id;
-    const body = req.body;
+    const { id } = req.params;
+    const updates = req.body;
 
-    if (body.password) {
+    if (updates.password) {
       const salt = await bcrypt.genSalt(10);
-      body.password = await bcrypt.hash(body.password, salt);
+      updates.password = await bcrypt.hash(updates.password, salt);
     }
 
-    const userUpdated = await User.findByIdAndUpdate(id, body, { new: true });
+    const userUpdated = await User.findByIdAndUpdate(id, updates, { new: true });
+    if (!userUpdated) return sendErrorResponse(res, "User not found", 404);
 
-    if (!userUpdated) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({ message: "User updated successfully", userUpdated });
+    sendSuccessResponse(res, "User updated successfully", userUpdated);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: "Internal server error" });
+    sendErrorResponse(res, error.message);
   }
 };
 
 export const updatePartialUser = async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     const updates = req.body;
     const userUpdated = await User.findByIdAndUpdate(id, updates, { new: true });
 
-    if (!userUpdated) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!userUpdated) return sendErrorResponse(res, "User not found", 404);
 
-    res.status(200).json({ message: "User updated successfully", userUpdated });
+    sendSuccessResponse(res, "User updated successfully", userUpdated);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: "Internal server error"});  }
+    sendErrorResponse(res, error.message);
+  }
 };
 
 export const deleteUser = async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     const userDeleted = await User.findOneAndDelete(id);
-
-    if(!userDeleted){
-      res.status(404).json({message: "User not found"});
-    }
+    if (!userDeleted) return sendErrorResponse(res, "User not found", 404);
 
     await Cart.findByIdAndDelete(userDeleted.cart);
 
-    res.status(200).json({message: "User deleted successfully"});
+    sendSuccessResponse(res, "User deleted successfully");
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: "Internal server error"});  }
+    sendErrorResponse(res, error.message);
+  }
 };
 
 export const loggingUser = async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).send({ message: 'Incorrect Email/Unregistered User' });
-    }
+    if (!user) return sendErrorResponse(res, 'Incorrect Email/Unregistered User', 400);
 
     const isCorrect = await bcrypt.compare(password, user.password);
-    if (!isCorrect) {
-      return res.status(400).send({ message: 'Wrong Password' });
-    }
+    if (!isCorrect) return sendErrorResponse(res, 'Wrong Password', 400);
 
-    // Generamos el token
     const token = jwt.sign(
-      { 
-        id: user._id,
-      },
-      SECRET_KEY,
-      { expiresIn: '1h' }
+      { id: user.id, email: user.email },  // El payload
+      variables.SECRET_KEY,
+      { expiresIn: '1h' }  // Opciones adicionales
     );
+    
 
-    res.json({
+    sendSuccessResponse(res, "Login successful", {
       token,
       user: {
         id: user.id,
@@ -137,7 +119,6 @@ export const loggingUser = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).send({ message: 'Internal server error' });
+    sendErrorResponse(res, error.message);
   }
 };
