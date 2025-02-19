@@ -3,7 +3,7 @@ import fs from 'fs';
 import variables from '../config/env.js'
 
 // Función para subir una imagen a Cloudinary
-async function uploadImage(filePath, folderName) {
+async function saveCloudinary(filePath, folderName) {
     return new Promise((resolve, reject) => {
         // Configura Cloudinary
         cloudinary.config({
@@ -16,7 +16,7 @@ async function uploadImage(filePath, folderName) {
         const uploadResult = cloudinary.uploader.upload_stream(
             {
                 resource_type: 'auto',
-                public_id: `users/${Date.now()}`,
+                public_id: `${Date.now()}`,
                 folder: folderName,
             },
             (error, result) => {
@@ -31,4 +31,4 @@ async function uploadImage(filePath, folderName) {
     });
 }
 
-export default uploadImage;
+export default saveCloudinary;

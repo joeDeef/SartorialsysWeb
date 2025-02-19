@@ -2,7 +2,7 @@ import Product from "../models/Product.js";
 import fs from "fs";
 import path from "path";
 import Cart from "../models/Cart.js";
-import uploadImage from "../utils/uploadImage.js";
+import uploadProductImages from "../utils/uploadImages.js";
 
 const sendErrorResponse = (res, message, statusCode = 500) => {
   console.error(message);
@@ -11,33 +11,6 @@ const sendErrorResponse = (res, message, statusCode = 500) => {
 
 const sendSuccessResponse = (res, message, data = null, statusCode = 200) => {
   res.status(statusCode).json({ message, data });
-};
-
-export const addProduct = async (req, res) => {
-  try {
-    const product = req.body;
-    const productStored = await Product.create(product);
-
-    if (!productStored) {
-      return sendErrorResponse(res, "The product was not saved", 404);
-    }
-
-    return sendSuccessResponse(
-      res,
-      "Product created successfully",
-      productStored,
-      201
-    );
-  } catch (error) {
-    if (error.code === 11000) {
-      return sendErrorResponse(
-        res,
-        `This code already exists: ${req.body.code}`,
-        409
-      );
-    }
-    sendErrorResponse(res, "Internal server error");
-  }
 };
 
 export const getProducts = async (req, res) => {
@@ -52,7 +25,7 @@ export const getProducts = async (req, res) => {
   }
 };
 
-export const uploadImages = async (req, res) => {
+/* export const uploadImages = async (req, res) => {
   try {
     const { code: productCode } = req.params;
     const files = req.files;
@@ -93,12 +66,10 @@ export const uploadImages = async (req, res) => {
         return res.status(404).json({ message: "Product not found" });
       }
 
-      return res
-        .status(200)
-        .json({
-          message: "Images uploaded successfully",
-          product: productUpdated,
-        });
+      return res.status(200).json({
+        message: "Images uploaded successfully",
+        product: productUpdated,
+      });
     } else {
       return res.status(400).json({ message: "No valid images uploaded" });
     }
@@ -106,7 +77,7 @@ export const uploadImages = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
-};
+}; */
 
 export const getProduct = async (req, res) => {
   try {
@@ -169,68 +140,47 @@ export const deleteProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   try {
-    const { code } = req.params; // El código del producto es pasado en la URL
-    const updateFields = req.body; // Campos a actualizar
+    const { code, ...productData } = req.body;
 
-    // Buscamos el producto por el código
-    const product = await Product.findOne({ code });
-
-    if (!product) {
-      return sendErrorResponse(res, "Product not found", 404);
-    }
-
-    // Actualizamos los campos solo si están presentes en el cuerpo de la solicitud
-    Object.keys(updateFields).forEach((key) => {
-      if (updateFields[key] !== undefined) {
-        product[key] = updateFields[key];
-      }
-    });
-
-    // Si el campo 'inventory' es actualizado, validamos que la estructura sea correcta
-    if (updateFields.inventory) {
-      updateFields.inventory.forEach((updatedInventory) => {
-        const { size, color } = updatedInventory;
-
-        const inventoryItem = product.inventory.find(
-          (item) => item.size === size
-        );
-
-        if (inventoryItem) {
-          color.forEach((updatedColor) => {
-            const colorItem = inventoryItem.color.find(
-              (c) => c.name === updatedColor.name
-            );
-
-            if (colorItem) {
-              if (updatedColor.amount !== undefined) {
-                colorItem.amount = updatedColor.amount;
-              }
-
-              if (updatedColor.status !== undefined) {
-                colorItem.status = updatedColor.status;
-              }
-            } else {
-              inventoryItem.color.push(updatedColor);
-            }
-          });
-        } else {
-          product.inventory.push(updatedInventory);
-        }
-      });
-    }
-
-    // Guardamos el producto actualizado
-    const updatedProduct = await product.save();
-
-    return sendSuccessResponse(
-      res,
-      "Product updated successfully",
-      updatedProduct,
-      200
+    const updatedProduct = await Product.findOneAndUpdate(
+      { code: req.params.code },
+      productData,
+      { new: true, overwrite: true }
     );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({
+      message: "Product replaced successfully",
+      product: updatedProduct
+    });
   } catch (error) {
-    console.error(error);
-    sendErrorResponse(res, "Internal server error", 500);
+    sendErrorResponse(res, error.message);
+  }
+};
+
+export const updatePartialProduct = async (req, res) => {
+  try {
+    const { code, ...updateFields } = req.body;
+
+    const updatedProduct = await Product.findOneAndUpdate(
+      { code: req.params.code },
+      { $set: updateFields },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({
+      message: "Product updated successfully",
+      product: updatedProduct
+    });
+  } catch (error) {
+    sendErrorResponse(res, error.message);
   }
 };
 
@@ -274,5 +224,39 @@ export const deleteImage = async (req, res) => {
     sendSuccessResponse(res, "Image deleted successfully", product);
   } catch (error) {
     sendErrorResponse(res, "Internal server error");
+  }
+};
+
+export const addProduct = async (req, res) => {
+  try {
+    const { productData } = req;
+    let imageUrls = [];
+
+    try {
+      imageUrls = await uploadProductImages(req.files, "products");
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+
+    const newProduct = new Product({
+      ...productData,
+      images: imageUrls,
+    });
+
+    const productStored = await newProduct.save();
+
+    return res.status(201).json({
+      message: "Product created successfully",
+      product: productStored,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    if (error.code === 11000) {
+      return res.status(409).json({ message: `This code already exists: ${productData.code}` });
+    }
+
+    res.status(500).json({ message: "Internal server error" });
   }
 };
