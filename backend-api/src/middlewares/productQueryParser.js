@@ -4,11 +4,20 @@ export const productQueryParser = (req, res, next) => {
     let filter = {};
   
     // Filtros de búsqueda
-    if (name) filter.name = { $regex: name, $options: 'i' }; // Filtrar por nombre (case insensitive)
+    if (name) filter.name = { $regex: name, $options: 'i' };
     if (category) filter.category = category;
-    if (available !== undefined) filter.available = available === 'true'; // Convertir a booleano
-    if (deleted !== undefined) filter.deleted = deleted === 'true'; // Filtrar por eliminación lógica
+
+    if (available !== undefined) {
+      filter.available = available === 'true';
+    } else {
+      filter.available = true;
+    }
   
+    if (deleted === undefined) {
+      filter.deleted = false;
+    } else {
+      filter.deleted = deleted === 'true';
+    }
     // Filtros para precios
     if (priceMin || priceMax) {
       filter.price = {};

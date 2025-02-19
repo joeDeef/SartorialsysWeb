@@ -35,7 +35,7 @@ export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findOne({ _id: id, active: true }).select("-password");
-    if (!user) return sendErrorResponse(res, "User not found", 404);
+    if (!user) return sendErrorResponse(res, "","User not found", 404);
     sendSuccessResponse(res, "User retrieved successfully", user);
   } catch (error) {
     sendErrorResponse(res, error.message);
@@ -52,12 +52,12 @@ export const updateUser = async (req, res) => {
     }
 
     const updatedUser = await Product.findOneAndUpdate(
-      { id: req.params.id },
+      { _id: req.params.id },
       userData,
       { new: true }
     );
 
-    if (!updatedUser) return sendErrorResponse(res, "User not found", 404);
+    if (!updatedUser) return sendErrorResponse(res, "","User not found", 404);
 
     sendSuccessResponse(res, "User updated successfully", userUpdated);
   } catch (error) {
@@ -75,11 +75,11 @@ export const updatePartialUser = async (req, res) => {
     }
 
     const userUpdated = await User.findByIdAndUpdate(
-      { id: req.params.id },
+      { _id: req.params.id },
       { $set: userData },
       { new: true }
     );
-    if (!userUpdated) return sendErrorResponse(res, "User not found", 404);
+    if (!userUpdated) return sendErrorResponse(res,"", "User not found", 404);
 
     sendSuccessResponse(res, "User updated successfully", userUpdated);
   } catch (error) {
@@ -95,7 +95,7 @@ export const deleteUser = async (req, res) => {
       { new: true }
     );
 
-    if (!userDeleted) return sendErrorResponse(res, "User not found", 404);
+    if (!userDeleted) return sendErrorResponse(res,"", "User not found", 404);
 
     /*
     if (userDeleted.cart) {
@@ -116,7 +116,7 @@ export const loggingUser = async (req, res) => {
       return sendErrorResponse(res, "Incorrect Email/Unregistered User", 400);
 
     const isCorrect = await bcrypt.compare(password, user.password);
-    if (!isCorrect) return sendErrorResponse(res, "Wrong Password", 400);
+    if (!isCorrect) return sendErrorResponse(res,"", "Wrong Password", 400);
 
     const token = jwt.sign(
       { id: user.id, email: user.email }, // El payload

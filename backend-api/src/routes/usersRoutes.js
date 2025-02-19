@@ -11,6 +11,7 @@ router.get("", userQueryParser, userController.getUsers);
 router.get("/:id", userController.getUser);
 
 router.put("/:id", userController.updateUser);
+router.patch("/:id", userController.updatePartialUser);
 
 router.delete("/:id", userController.deleteUser);
 

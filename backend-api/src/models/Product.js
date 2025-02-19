@@ -27,7 +27,7 @@ const productSchema = new mongoose.Schema({
         enum: ['S', 'M', 'L', 'XL'],
         required: false
       },
-      color: [
+      colors: [
         {
           name: { type: String, required: true },
           amount: { 

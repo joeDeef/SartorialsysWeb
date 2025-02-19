@@ -1,32 +1,13 @@
 import Product from "../models/Product.js";
-import fs from "fs";
-import path from "path";
-import Cart from "../models/Cart.js";
 import uploadProductImages from "../utils/uploadImages.js";
-
-const sendErrorResponse = (res, message, statusCode = 500) => {
-  console.error(message);
-  res.status(statusCode).json({ message });
-};
-
-const sendSuccessResponse = (res, message, data = null, statusCode = 200) => {
-  res.status(statusCode).json({ message, data });
-};
+import { sendErrorResponse, sendSuccessResponse } from "../utils/messages.js";
 
 export const addProduct = async (req, res) => {
   try {
-    const { productData } = req;
-    let imageUrls = [];
-
-    try {
-      imageUrls = await uploadProductImages(req.files, "products");
-    } catch (error) {
-      sendErrorResponse(res, error.message);
-    }
-
+    const productData = req.body;
     const newProduct = new Product({
       ...productData,
-      images: imageUrls,
+      images: [],
     });
 
     const productStored = await newProduct.save();
@@ -41,11 +22,39 @@ export const addProduct = async (req, res) => {
     if (error.code === 11000) {
       sendErrorResponse(
         res,
+        error.message,
         `This code already exists: ${productData.code}`,
         409
       );
     }
-    sendErrorResponse(res, "Internal server error");
+    sendErrorResponse(res, error.message);
+  }
+};
+
+export const uploadImages = async (req, res) => {
+  try {
+    const { code } = req.params;
+    let fileNames = [];
+
+    try {
+      fileNames = await uploadProductImages(req.files, "products");
+    } catch (error) {
+      return sendErrorResponse(res, error.message);
+    }
+
+    const productFound = await Product.findOneAndUpdate(
+      { code },
+      { $push: { images: { $each: fileNames } } },
+      { new: true }
+    );
+
+    if (!productFound) {
+      return sendErrorResponse(res, "", "Product not found", 404);
+    }
+
+    return sendSuccessResponse(res, "Images added", productFound, 200);
+  } catch (error) {
+    return sendErrorResponse(res, error.message);
   }
 };
 
@@ -59,71 +68,116 @@ export const getProducts = async (req, res) => {
       .sort(sort);
 
     if (!products || products.length === 0) {
-      return sendErrorResponse(res, "No products found", 204);
+      return sendErrorResponse(res, "", "No products found", 204);
     }
 
     sendSuccessResponse(res, "Products retrieved successfully", products);
   } catch (error) {
     console.error(error);
-    sendErrorResponse(res, "Internal server error", 500);
+    sendErrorResponse(res, error.message);
   }
 };
 
 export const getProduct = async (req, res) => {
   try {
     const { code: codeProduct } = req.params;
-    const product = await Product.findOne({ code: codeProduct });
+    const product = await Product.findOne({
+      code: codeProduct,
+      available: true,
+      deleted: false,
+    });
 
     if (!product) {
-      return sendErrorResponse(res, "No product found", 404);
+      return sendErrorResponse(res, "", "No product found", 404);
     }
     sendSuccessResponse(res, "Product retrieved successfully", product);
-  } catch (error) {
-    sendErrorResponse(res, "Internal server error");
-  }
-};
-
-export const updateProduct = async (req, res) => {
-  try {
-    const { code, ...productData } = req.body;
-
-    const updatedProduct = await Product.findOneAndUpdate(
-      { code: req.params.code },
-      productData,
-      { new: true}
-    );
-
-    if (!updatedProduct) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    res.status(200).json({
-      message: "Product replaced successfully",
-      product: updatedProduct,
-    });
   } catch (error) {
     sendErrorResponse(res, error.message);
   }
 };
 
-export const updatePartialProduct = async (req, res) => {
+export const updateProduct = async (req, res) => {
   try {
-    const { code, ...updateFields } = req.body;
+    const productData = req.body;
 
     const updatedProduct = await Product.findOneAndUpdate(
       { code: req.params.code },
-      { $set: updateFields },
+      {
+        ...productData,
+      },
       { new: true }
     );
 
     if (!updatedProduct) {
-      return res.status(404).json({ message: "Product not found" });
+      return sendErrorResponse(res, "", "Product not found", 404);
     }
 
-    res.status(200).json({
-      message: "Product updated successfully",
-      product: updatedProduct,
-    });
+    sendSuccessResponse(
+      res,
+      "Product updated successfully",
+      updatedProduct,
+      200
+    );
+  } catch (error) {
+    return sendErrorResponse(res, error.message);
+  }
+};
+
+export const updatePartialProduct = async (req, res) => {
+  try {
+    const { code } = req.params;
+    const productData = req.body;
+
+    const updatedProduct = await Product.findOneAndUpdate(
+      {
+        code,
+        "inventory.size": productData.inventory[0].size,
+        "inventory.colors.name": productData.inventory[0].colors[0].name,
+      },
+      {
+        $set: {
+          price: productData.price,
+          "inventory.$[size].colors.$[color].amount":
+            productData.inventory[0].colors[0].amount,
+          "inventory.$[size].colors.$[color].available":
+            productData.inventory[0].colors[0].available,
+        },
+      },
+      {
+        new: true,
+        arrayFilters: [
+          { "size.size": productData.inventory[0].size },
+          { "color.name": productData.inventory[0].colors[0].name },
+        ],
+      }
+    );
+
+    if (!updatedProduct) {
+      return sendErrorResponse(res, "", "Product not found", 404);
+    }
+
+    sendSuccessResponse(
+      res,
+      "Product updated successfully",
+      updatedProduct,
+      200
+    );
+  } catch (error) {
+    sendErrorResponse(res, error.message);
+  }
+};
+
+export const deleteProduct = async (req, res) => {
+  try {
+    const { code } = req.params;
+    const productToDelete = await Product.findOneAndUpdate(
+      { code },
+      { deleted: true }
+    );
+    if (!productToDelete) {
+      return sendErrorResponse(res, "", "Product not found", 404);
+    }
+    sendSuccessResponse(res, "Product deleted successfully");
   } catch (error) {
     sendErrorResponse(res, error.message);
   }
@@ -137,80 +191,139 @@ export const deleteImage = async (req, res) => {
     const product = await Product.findOne({ code });
 
     if (!product) {
-      return sendErrorResponse(res, "Product not found", 404);
+      sendErrorResponse(res, "", "Product not found", 404);
     }
 
-    const imageWithExtension = product.images.find((image) => {
-      const imageNameWithoutExtension = path.basename(
-        image,
-        path.extname(image)
-      );
-      return imageNameWithoutExtension === imageName;
-    });
-
-    if (!imageWithExtension) {
-      return sendErrorResponse(res, "Image not found in product", 400);
+    const imageIndex = product.images.indexOf(imageName);
+    if (imageIndex > -1) {
+      product.images.splice(imageIndex, 1);
     }
 
-    const imagesDirectory = path.join(process.cwd(), "uploads");
-    const imagePath = path.join(imagesDirectory, imageWithExtension);
-
-    try {
-      await fs.promises.unlink(imagePath);
-    } catch (err) {
-      return sendErrorResponse(res, `Failed to delete image: ${err.message}`);
-    }
-
-    product.images = product.images.filter(
-      (image) => image !== imageWithExtension
-    );
     await product.save();
 
-    sendSuccessResponse(res, "Image deleted successfully", product);
+    sendSuccessResponse(res, "Image deleted successfully", product, 200);
   } catch (error) {
-    sendErrorResponse(res, "Internal server error");
+    sendErrorResponse(res, error.message);
   }
 };
 
-export const deleteProduct = async (req, res) => {
+export const addSize = async (req, res) => {
+  const { code } = req.params;
+  const { size, colors } = req.body;
+
   try {
-    const { code: codeProduct } = req.params;
-    const productToDelete = await Product.findOne({ code: codeProduct });
+    const updatedProduct = await Product.findOneAndUpdate(
+      { code },
+      {
+        $push: {
+          inventory: {
+            size,
+            colors,
+            available: true,
+          },
+        },
+      },
+      { new: true }
+    );
 
-    if (!productToDelete) {
-      return sendErrorResponse(res, "Product not found", 404);
+    if (!updatedProduct)
+      return sendErrorResponse(res, "", "Product not found", 404);
+    sendSuccessResponse(res, "Size added to inventory", updatedProduct);
+  } catch (error) {
+    sendErrorResponse(res, error.message);
+  }
+};
+
+export const addColor = async (req, res) => {
+  try {
+    const { code, size } = req.params;
+    const { colors } = req.body;
+
+    // Buscar el producto y la talla dentro del inventario
+    const updatedProduct = await Product.findOneAndUpdate(
+      {
+        code,
+        "inventory.size": size,
+      },
+      {
+        $push: {
+          "inventory.$.colors": { $each: colors },
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return sendErrorResponse(res, "", "Product or size not found", 404);
     }
 
-    const carts = await Cart.find({ "items.product": productToDelete._id });
+    sendSuccessResponse(res, "Colors added to the size", updatedProduct, 200);
+  } catch (error) {
+    sendErrorResponse(res, error.message);
+  }
+};
 
-    for (const cart of carts) {
-      cart.items = cart.items.filter(
-        (item) => item.product.toString() !== productToDelete._id.toString()
-      );
-      await cart.updateTotalPrice();
+export const removeSize = async (req, res) => {
+  try {
+    const { code, size } = req.params;
+
+    const updatedProduct = await Product.findOneAndUpdate(
+      {
+        code,
+      },
+      {
+        $pull: {
+          inventory: { size },
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return sendErrorResponse(res, "", "Product or size not found", 404);
     }
 
-    // Eliminar imágenes asociadas
-    const imagesDirectory = path.join(process.cwd(), "uploads");
-    const imageNames = productToDelete.images;
-
-    if (imageNames.length > 0) {
-      for (const imageName of imageNames) {
-        const imagePath = path.join(imagesDirectory, imageName);
-        try {
-          await fs.promises.unlink(imagePath);
-        } catch (err) {
-          console.error(`Failed to delete image: ${imagePath}`, err.message);
-        }
-      }
-    }
-
-    await Product.findOneAndDelete({ code: codeProduct });
     sendSuccessResponse(
       res,
-      "Product deleted successfully and removed from all carts"
+      "Size removed from the product",
+      updatedProduct,
+      200
     );
   } catch (error) {
-    sendErrorResponse(res, "Internal server error");
+    sendErrorResponse(res, error.message);
+  }
+};
+
+export const removeColor = async (req, res) => {
+  try {
+    const { code, size, color } = req.params;
+
+    const updatedProduct = await Product.findOneAndUpdate(
+      { code, "inventory.size": size },
+      {
+        $pull: {
+          "inventory.$.colors": { name: color },
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return sendErrorResponse(
+        res,
+        "",
+        "Product, size, or color not found",
+        404
+      );
+    }
+
+    sendSuccessResponse(
+      res,
+      "Color removed from the product",
+      updatedProduct,
+      200
+    );
+  } catch (error) {
+    sendErrorResponse(res, error.message);
   }
 };
