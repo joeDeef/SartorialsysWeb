@@ -1,17 +1,9 @@
-import User from '../models/User.js';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import Cart from '../models/Cart.js';
-import variables  from '../config/env.js';
-
-const sendErrorResponse = (res, message, statusCode = 500) => {
-  console.error(message);
-  res.status(statusCode).json({ message });
-};
-
-const sendSuccessResponse = (res, message, data, statusCode = 200) => {
-  res.status(statusCode).json({ message, data });
-};
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import Cart from "../models/Cart.js";
+import variables from "../config/env.js";
+import { sendErrorResponse, sendSuccessResponse } from "../utils/messages.js";
 
 export const createUser = async (req, res) => {
   try {
@@ -28,9 +20,9 @@ export const getUsers = async (req, res) => {
     const { filter, pagination, sort } = req.queryParams;
 
     const users = await User.find(filter)
-                            .skip(pagination.skip)
-                            .limit(pagination.limit)
-                            .sort(sort);
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .sort(sort);
 
     if (!users.length) return sendErrorResponse(res, "No users found", 204);
     sendSuccessResponse(res, "Users retrieved successfully", users);
@@ -42,7 +34,7 @@ export const getUsers = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id).select('-password');
+    const user = await User.findOne({ _id: id, active: true }).select("-password");
     if (!user) return sendErrorResponse(res, "User not found", 404);
     sendSuccessResponse(res, "User retrieved successfully", user);
   } catch (error) {
@@ -52,16 +44,20 @@ export const getUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updates = req.body;
+    const userData = req.body;
 
-    if (updates.password) {
+    if (userData.password) {
       const salt = await bcrypt.genSalt(10);
-      updates.password = await bcrypt.hash(updates.password, salt);
+      userData.password = await bcrypt.hash(userData.password, salt);
     }
 
-    const userUpdated = await User.findByIdAndUpdate(id, updates, { new: true });
-    if (!userUpdated) return sendErrorResponse(res, "User not found", 404);
+    const updatedUser = await Product.findOneAndUpdate(
+      { id: req.params.id },
+      userData,
+      { new: true }
+    );
+
+    if (!updatedUser) return sendErrorResponse(res, "User not found", 404);
 
     sendSuccessResponse(res, "User updated successfully", userUpdated);
   } catch (error) {
@@ -71,10 +67,18 @@ export const updateUser = async (req, res) => {
 
 export const updatePartialUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updates = req.body;
-    const userUpdated = await User.findByIdAndUpdate(id, updates, { new: true });
+    const userData = req.body;
 
+    if (userData.password) {
+      const salt = await bcrypt.genSalt(10);
+      userData.password = await bcrypt.hash(userData.password, salt);
+    }
+
+    const userUpdated = await User.findByIdAndUpdate(
+      { id: req.params.id },
+      { $set: userData },
+      { new: true }
+    );
     if (!userUpdated) return sendErrorResponse(res, "User not found", 404);
 
     sendSuccessResponse(res, "User updated successfully", userUpdated);
@@ -85,13 +89,20 @@ export const updatePartialUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const userDeleted = await User.findOneAndDelete(id);
+    const userDeleted = await User.findByIdAndUpdate(
+      { _id: req.params.id },
+      { active: false },
+      { new: true }
+    );
+
     if (!userDeleted) return sendErrorResponse(res, "User not found", 404);
 
-    await Cart.findByIdAndDelete(userDeleted.cart);
+    /*
+    if (userDeleted.cart) {
+      await Cart.findByIdAndUpdate(userDeleted.cart._id, { deleted: true });
+    }*/
 
-    sendSuccessResponse(res, "User deleted successfully");
+    sendSuccessResponse(res, "User deleted");
   } catch (error) {
     sendErrorResponse(res, error.message);
   }
@@ -101,17 +112,17 @@ export const loggingUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user) return sendErrorResponse(res, 'Incorrect Email/Unregistered User', 400);
+    if (!user)
+      return sendErrorResponse(res, "Incorrect Email/Unregistered User", 400);
 
     const isCorrect = await bcrypt.compare(password, user.password);
-    if (!isCorrect) return sendErrorResponse(res, 'Wrong Password', 400);
+    if (!isCorrect) return sendErrorResponse(res, "Wrong Password", 400);
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },  // El payload
+      { id: user.id, email: user.email }, // El payload
       variables.SECRET_KEY,
-      { expiresIn: '1h' }  // Opciones adicionales
+      { expiresIn: "1h" } // Opciones adicionales
     );
-    
 
     sendSuccessResponse(res, "Login successful", {
       token,
@@ -122,7 +133,7 @@ export const loggingUser = async (req, res) => {
         email: user.email,
         role: user.role,
         cartID: user.cart._id,
-      }
+      },
     });
   } catch (error) {
     sendErrorResponse(res, error.message);

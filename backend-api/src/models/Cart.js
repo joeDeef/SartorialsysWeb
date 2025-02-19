@@ -28,6 +28,10 @@ const cartSchema = new mongoose.Schema({
     required: true,
     min: [0, 'Total price must be greater than or equal to 0'],
     default: 0
+  },
+  deleted: {
+    type: Boolean,
+    default: false
   }
 });
 

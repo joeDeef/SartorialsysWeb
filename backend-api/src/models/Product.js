@@ -35,15 +35,26 @@ const productSchema = new mongoose.Schema({
             required: true,
             min: [0, 'Amount must be greater than or equal to 0']
           },
-          status: { 
+          available: { 
             type: Boolean, 
-            enum: [true, false], // Available or Not Available
             default: true 
           }
         }
-      ]
+      ],
+      available: { 
+        type: Boolean, 
+        default: true 
+      }
     }
   ],
+  available: { 
+    type: Boolean, 
+    default: true
+  },
+  deleted: { 
+    type: Boolean, 
+    default: false
+  },
   images: [String]
 });
 
