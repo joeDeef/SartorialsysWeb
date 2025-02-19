@@ -13,6 +13,40 @@ const sendSuccessResponse = (res, message, data = null, statusCode = 200) => {
   res.status(statusCode).json({ message, data });
 };
 
+export const addProduct = async (req, res) => {
+  try {
+    const { productData } = req;
+    let imageUrls = [];
+
+    try {
+      imageUrls = await uploadProductImages(req.files, "products");
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+
+    const newProduct = new Product({
+      ...productData,
+      images: imageUrls,
+    });
+
+    const productStored = await newProduct.save();
+
+    return res.status(201).json({
+      message: "Product created successfully",
+      product: productStored,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    if (error.code === 11000) {
+      return res.status(409).json({ message: `This code already exists: ${productData.code}` });
+    }
+
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const getProducts = async (req, res) => {
   try {
     const products = await Product.find();
@@ -20,6 +54,21 @@ export const getProducts = async (req, res) => {
       return sendErrorResponse(res, "No products found", 204);
     }
     sendSuccessResponse(res, "Products retrieved successfully", products);
+  } catch (error) {
+    sendErrorResponse(res, "Internal server error");
+  }
+};
+
+export const getProduct = async (req, res) => {
+  try {
+    const { code: codeProduct } = req.params;
+    const product = await Product.findOne({ code: codeProduct });
+
+    if (!product) {
+      return sendErrorResponse(res, "No product found", 404);
+    }
+
+    sendSuccessResponse(res, "Product retrieved successfully", product);
   } catch (error) {
     sendErrorResponse(res, "Internal server error");
   }
@@ -79,20 +128,7 @@ export const getProducts = async (req, res) => {
   }
 }; */
 
-export const getProduct = async (req, res) => {
-  try {
-    const { code: codeProduct } = req.params;
-    const product = await Product.findOne({ code: codeProduct });
 
-    if (!product) {
-      return sendErrorResponse(res, "No product found", 404);
-    }
-
-    sendSuccessResponse(res, "Product retrieved successfully", product);
-  } catch (error) {
-    sendErrorResponse(res, "Internal server error");
-  }
-};
 
 //OBSERVACION
 export const deleteProduct = async (req, res) => {
@@ -224,39 +260,5 @@ export const deleteImage = async (req, res) => {
     sendSuccessResponse(res, "Image deleted successfully", product);
   } catch (error) {
     sendErrorResponse(res, "Internal server error");
-  }
-};
-
-export const addProduct = async (req, res) => {
-  try {
-    const { productData } = req;
-    let imageUrls = [];
-
-    try {
-      imageUrls = await uploadProductImages(req.files, "products");
-    } catch (error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    const newProduct = new Product({
-      ...productData,
-      images: imageUrls,
-    });
-
-    const productStored = await newProduct.save();
-
-    return res.status(201).json({
-      message: "Product created successfully",
-      product: productStored,
-    });
-
-  } catch (error) {
-    console.error(error);
-
-    if (error.code === 11000) {
-      return res.status(409).json({ message: `This code already exists: ${productData.code}` });
-    }
-
-    res.status(500).json({ message: "Internal server error" });
   }
 };

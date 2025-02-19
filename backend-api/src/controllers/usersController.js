@@ -25,7 +25,13 @@ export const createUser = async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const { filter, pagination, sort } = req.queryParams;
+
+    const users = await User.find(filter)
+                            .skip(pagination.skip)
+                            .limit(pagination.limit)
+                            .sort(sort);
+
     if (!users.length) return sendErrorResponse(res, "No users found", 204);
     sendSuccessResponse(res, "Users retrieved successfully", users);
   } catch (error) {

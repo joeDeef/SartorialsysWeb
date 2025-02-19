@@ -15,6 +15,5 @@ router.put('/:code', productController.updateProduct);
 router.patch('/:code', productController.updatePartialProduct);
 
 router.delete('/:code', productController.deleteProduct);
-router.delete('/delete-image/:code', productController.deleteImage)
 
 export default router;
