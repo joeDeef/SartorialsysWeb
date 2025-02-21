@@ -5,7 +5,6 @@ import { userQueryParser } from "../middlewares/userQueryParser.js";
 const router = express.Router();
 
 router.post("", userController.createUser);
-router.post("/login", userController.loggingUser);
 
 router.get("", userQueryParser, userController.getUsers);
 router.get("/:id", userController.getUser);
