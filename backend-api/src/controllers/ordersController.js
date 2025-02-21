@@ -1,74 +1,85 @@
 import Cart from '../models/Cart.js';
-import Order from '../models/Order.js'
+import Order from '../models/Order.js';
 
 export const saveOrder = async (req, res) => {
-    try {
-        var { cartId } = req.params;
-        const cart = await Cart.findById(cartId).populate('items.product');
+  try {
+    const { cartId } = req.params;
+    const cart = await Cart.findById(cartId).populate('items.product');
 
-        if (!cart) {
-          throw new Error('Cart not found');
-        }
-    
-        // 2. Prepara los ítems del pedido basados en el carrito
-        const orderItems = [];
-        let orderTotalPrice = 0;
-    
-        for (const item of cart.items) {
-          const product = item.product;
-          if (product) {
-            const totalPrice = item.quantity * product.price;
-            orderItems.push({
-              code: product.code,
-              name: product.name,
-              unitPrice: product.price,
-              size: product.size,
-              color: product.color,
-              quantity: item.quantity,
-              totalPrice: totalPrice
-            });
-            orderTotalPrice += totalPrice;
-          }
-        }
-    
-        // 3. Crea el nuevo pedido
-        const order = new Order({
-          user: cart.user,
-          shippingInfo: req.body.shippingInfo,
-          paymentInfo: req.body.paymentInfo,
-          items: orderItems,
-          subtotal: orderTotalPrice,
-          orderTotalPrice: orderTotalPrice,
-          orderDate: new Date(),
-          status: 'Pendiente'
-        });
-    
-        // 4. Guarda el pedido en la base de datos
-        await order.save();
-    
-        // 5. Vacía el carrito después de guardar el pedido
-        cart.items = [];
-        cart.totalPrice = 0;
-        await cart.save();
-    
-        res.status(200).send({ message: 'Order placed successfully', order });
-      } catch (error) {
-        res.status(500).send({ message: 'Server error', error });
+    if (!cart) {
+      return res.status(404).send({ message: 'Cart not found' });
+    }
+
+    const orderItems = [];
+    let subtotal = 0;
+
+    for (const item of cart.items) {
+      const product = item.product;
+      if (!product) continue;
+
+      // Buscar la talla y color dentro del inventario del producto
+      const sizeData = product.inventory.find(s => s.size === item.size);
+      if (!sizeData) {
+        return res.status(400).send({ message: `Size ${item.size} not found for product ${product.name}` });
       }
-    };
 
-export const getOrders = async (req, res) => {
-    try{
-        var { userId }= req.params
-        const orders = await Order.find({user: userId});
+      const colorData = sizeData.colors.find(c => c.name === item.color);
+      if (!colorData) {
+        return res.status(400).send({ message: `Color ${item.color} not found for product ${product.name}` });
+      }
 
-        if (!orders || orders.length === 0) {
-        return res.status(204).json({ message: "No orders found" });
-        }
+      // Calcular el total por producto
+      const totalPrice = item.quantity * product.price;
+      orderItems.push({
+        productId: product._id,
+        code: product.code,
+        name: product.name,
+        unitPrice: product.price,
+        size: item.size,
+        color: item.color,
+        quantity: item.quantity,
+        totalPrice: totalPrice
+      });
 
-        res.status(200).json({ message: "Orders retrieved successfully", orders });
+      subtotal += totalPrice;
+    }
+
+    // Crear la nueva orden
+    const order = new Order({
+      user: cart.user,
+      shippingInfo: req.body.shippingInfo,
+      paymentInfo: req.body.paymentInfo,
+      items: orderItems,
+      subtotal: subtotal,
+      orderDate: new Date(),
+      status: 'Pendiente'
+    });
+
+    await order.save();
+
+    // Vaciar el carrito después de guardar la orden
+    cart.items = [];
+    cart.totalPrice = 0;
+    await cart.save();
+
+    res.status(200).send({ message: 'Order placed successfully', order });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).send({ message: 'Server error', error });
+  }
+};
+
+// Obtener órdenes por usuario
+export const getOrders = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const orders = await Order.find({ user: userId });
+
+    if (!orders || orders.length === 0) {
+      return res.status(204).json({ message: "No orders found" });
+    }
+
+    res.status(200).json({ message: "Orders retrieved successfully", orders });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
   }
 };
