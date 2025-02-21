@@ -58,4 +58,37 @@ const productSchema = new mongoose.Schema({
   images: [String]
 });
 
+// Middleware to update `available` after to save
+productSchema.post('findOneAndUpdate', async function (doc) {
+  if (!doc) return;
+
+  let productUpdated = false;
+
+  doc.inventory.forEach(size => {
+    size.colors.forEach(color => {
+      const newAvailability = color.amount > 0;
+      if (color.available !== newAvailability) {
+        color.available = newAvailability;
+        productUpdated = true;
+      }
+    });
+
+    const sizeAvailable = size.colors.some(color => color.available);
+    if (size.available !== sizeAvailable) {
+      size.available = sizeAvailable;
+      productUpdated = true;
+    }
+  });
+
+  const productAvailable = doc.inventory.some(size => size.available);
+  if (doc.available !== productAvailable) {
+    doc.available = productAvailable;
+    productUpdated = true;
+  }
+
+  if (productUpdated) {
+    await doc.save();
+  }
+});
+
 export default mongoose.model("Product", productSchema);

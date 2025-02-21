@@ -128,40 +128,50 @@ export const updatePartialProduct = async (req, res) => {
     const { code } = req.params;
     const productData = req.body;
 
-    const updatedProduct = await Product.findOneAndUpdate(
-      {
-        code,
-        "inventory.size": productData.inventory[0].size,
-        "inventory.colors.name": productData.inventory[0].colors[0].name,
-      },
-      {
-        $set: {
-          price: productData.price,
-          "inventory.$[size].colors.$[color].amount":
-            productData.inventory[0].colors[0].amount,
-          "inventory.$[size].colors.$[color].available":
-            productData.inventory[0].colors[0].available,
-        },
-      },
-      {
-        new: true,
-        arrayFilters: [
-          { "size.size": productData.inventory[0].size },
-          { "color.name": productData.inventory[0].colors[0].name },
-        ],
+    const update = {};
+    Object.keys(productData).forEach((key) => {
+      if (key !== "inventory") {
+        update[key] = productData[key];
       }
-    );
+    });
+
+    let updatedProduct = null;
+
+    if (productData.inventory) {
+      for (const sizeData of productData.inventory) {
+        for (const colorData of sizeData.colors) {
+          updatedProduct = await Product.findOneAndUpdate(
+            {
+              code,
+              "inventory.size": sizeData.size,
+              "inventory.colors.name": colorData.name,
+            },
+            {
+              $set: {
+                "inventory.$[size].colors.$[color].amount": colorData.amount,
+                "inventory.$[size].colors.$[color].available": colorData.available,
+                ...update,
+              },
+            },
+            {
+              new: true,
+              arrayFilters: [
+                { "size.size": sizeData.size },
+                { "color.name": colorData.name },
+              ],
+            }
+          );
+        }
+      }
+    } else {
+      updatedProduct = await Product.findOneAndUpdate({ code }, { $set: update }, { new: true });
+    }
 
     if (!updatedProduct) {
       return sendErrorResponse(res, "", "Product not found", 404);
     }
 
-    sendSuccessResponse(
-      res,
-      "Product updated successfully",
-      updatedProduct,
-      200
-    );
+    sendSuccessResponse(res, "Product updated successfully", updatedProduct, 200);
   } catch (error) {
     sendErrorResponse(res, error.message);
   }
