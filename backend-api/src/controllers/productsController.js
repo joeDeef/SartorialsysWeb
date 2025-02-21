@@ -83,7 +83,6 @@ export const getProduct = async (req, res) => {
     const { code: codeProduct } = req.params;
     const product = await Product.findOne({
       code: codeProduct,
-      available: true,
       deleted: false,
     });
 

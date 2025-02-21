@@ -8,6 +8,14 @@ const cartItemSchema = new mongoose.Schema({
     ref: 'Product',
     required: true
   },
+  size: {
+    type: String,
+    required: true
+  },
+  color: {
+    type: String,
+    required: true
+  },
   quantity: {
     type: Number,
     required: true,
@@ -36,23 +44,27 @@ const cartSchema = new mongoose.Schema({
 });
 
 // Método para actualizar el totalPrice del carrito
-cartSchema.methods.updateTotalPrice = async function() {
-    let total = 0;
+cartSchema.methods.updateTotalPrice = async function () {
+  let total = 0;
+
+  // Recorremos todos los items del carrito
+  for (const item of this.items) {
+    const product = await Product.findById(item.product).exec();
     
-    // Recorremos todos los items del carrito
-    for (const item of this.items) {
-      const product = await Product.findById(item.product).exec(); // Usamos item.product que ya es un ObjectId
-      
-      if (product) {
-        // Calculamos el precio total sumando los productos del carrito
-        total += item.quantity * product.price;
+    if (product) {
+      // Verificamos si el producto tiene la talla y el color correctos
+      const sizeData = product.inventory.find(s => s.size === item.size);
+      if (sizeData) {
+        const colorData = sizeData.colors.find(c => c.name === item.color);
+        if (colorData) {
+          total += item.quantity * product.price;
+        }
       }
     }
-  
-    this.totalPrice = total;
-  
-    await this.save();
-  };
-  
+  }
+
+  this.totalPrice = total;
+  await this.save();
+};
 
 export default mongoose.model('Cart', cartSchema);
