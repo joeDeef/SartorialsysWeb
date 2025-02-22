@@ -17,6 +17,7 @@ export const sendSuccessResponse = (
     : res.status(statusCode).json(message);
 };
 
-export const printLogsError = (messageError) => {
-  console.error(messageError);
+export const logsError = (error) => {
+  const stackLine = new Error().stack.split("\n")[2].trim();
+  console.error(`Error ${stackLine}: `, error.message);
 };

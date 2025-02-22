@@ -9,7 +9,7 @@ import {
 import {
   sendErrorResponse,
   sendSuccessResponse,
-  printLogsError,
+  logsError
 } from "../utils/messages.js";
 
 export const createUser = async (req, res) => {
@@ -17,7 +17,7 @@ export const createUser = async (req, res) => {
     const user = await createUserService(req.body);
     sendSuccessResponse(res, "User created successfully", user, 201);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -29,7 +29,7 @@ export const getUsers = async (req, res) => {
     if (!users.length) return sendErrorResponse(res, "No users found", 204);
     sendSuccessResponse(res, "Users retrieved successfully", users);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -40,7 +40,7 @@ export const getUser = async (req, res) => {
     if (!user) return sendErrorResponse(res, "User not found", 404);
     sendSuccessResponse(res, "User retrieved successfully", user);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -51,7 +51,7 @@ export const updateUser = async (req, res) => {
     if (!updatedUser) return sendErrorResponse(res, "User not found", 404);
     sendSuccessResponse(res, "User updated successfully", updatedUser);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -62,7 +62,7 @@ export const updatePartialUser = async (req, res) => {
     if (!updatedUser) return sendErrorResponse(res, "User not found", 404);
     sendSuccessResponse(res, "User updated successfully", updatedUser);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -73,7 +73,7 @@ export const deleteUser = async (req, res) => {
     if (!userDeleted) return sendErrorResponse(res, "User not found", 404);
     sendSuccessResponse(res, "User deleted");
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };

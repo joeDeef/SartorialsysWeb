@@ -1,6 +1,6 @@
 import * as productService from "../services/productService.js";
 import {
-  printLogsError,
+  logsError,
   sendErrorResponse,
   sendSuccessResponse,
 } from "../utils/messages.js";
@@ -15,7 +15,7 @@ export const addProduct = async (req, res) => {
       201
     );
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
 
     if (error.code === 11000) {
       return sendErrorResponse(
@@ -38,7 +38,7 @@ export const uploadImages = async (req, res) => {
       return sendErrorResponse(res, "Product not Found", 404);
     sendSuccessResponse(res, "Images added", productUpdated);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -52,7 +52,7 @@ export const getProducts = async (req, res) => {
 
     sendSuccessResponse(res, "Products retrieved successfully", products);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -63,7 +63,7 @@ export const getProduct = async (req, res) => {
     if (!product) return sendErrorResponse(res, "Product not Found", 404);
     sendSuccessResponse(res, "Product retrieved successfully", product);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res, error.message);
   }
 };
@@ -84,7 +84,7 @@ export const updateProduct = async (req, res) => {
       200
     );
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -105,7 +105,7 @@ export const updatePartialProduct = async (req, res) => {
       200
     );
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res, error.message);
   }
 };
@@ -118,7 +118,7 @@ export const deleteProduct = async (req, res) => {
       return sendErrorResponse(res, "Product not Found", 404);
     sendSuccessResponse(res, "Product deleted successfully");
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -134,7 +134,7 @@ export const deleteImage = async (req, res) => {
       return sendErrorResponse(res, "Product not found", 404);
     sendSuccessResponse(res, "Image deleted successfully", updatedProduct, 200);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -150,7 +150,7 @@ export const addSize = async (req, res) => {
       return sendErrorResponse(res, "Product not found", 404);
     sendSuccessResponse(res, "Size added to inventory", updatedProduct);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -167,7 +167,7 @@ export const addColor = async (req, res) => {
     }
     sendSuccessResponse(res, "Colors added to the size", updatedProduct, 200);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -184,7 +184,7 @@ export const removeSize = async (req, res) => {
     }
     sendSuccessResponse(res, "Size removed from the product", updatedProduct);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };
@@ -201,7 +201,7 @@ export const removeColor = async (req, res) => {
     }
     sendSuccessResponse(res, "Color removed from the product", updatedProduct);
   } catch (error) {
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res);
   }
 };

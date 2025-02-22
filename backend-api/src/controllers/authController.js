@@ -1,7 +1,7 @@
 import {
   sendErrorResponse,
   sendSuccessResponse,
-  printLogsError,
+  logsError,
 } from "../utils/messages.js";
 import { loginUserService } from "../services/authService.js";
 import { WrongEmailError, WrongPasswordError } from "../errors/authErrors.js";
@@ -19,7 +19,7 @@ export const loggingUser = async (req, res) => {
     ) {
       return sendErrorResponse(res, error.message, error.statusCode);
     }
-    printLogsError(error.message);
+    logsError(error);
     sendErrorResponse(res, error.message);
   }
 };
