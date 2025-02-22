@@ -1,35 +1,35 @@
-import express from 'express';
-import cors from 'cors'; // Importa cors
-import path from 'path'; // Importa path
-import * as db from './config/db.js';
-import { PORT } from './config/env.js';
-import router from './routes/routes.js';
+import express from "express";
+import * as db from "./config/db.js";
+import variables from "./config/env.js";
+import router from "./routes/routes.js";
+import cors from "cors";
 
 const app = express();
 
-// Configurar CORS
-app.use(cors({
-  origin: 'http://localhost:4200', // Permitir solicitudes desde este origen
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
-  allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
-}));
+// CORS Configuration
+app.use(
+  cors({
+    origin: "http://localhost:4200",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-// Middleware para parsear JSON
+// Middleware to parse JSON
 app.use(express.json());
 
-// Middleware para servir archivos estáticos desde "uploads"
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
-
-// Registrar rutas
+// Routes
 app.use(router);
 
-// Iniciar el servidor
-app.listen(PORT, () => {
-  console.log(`Server running at port -> ${PORT}`);
-  console.log(`Documentation available at -> localhost:${PORT}/api-docs/`);
+// Init Serve
+app.listen(variables.PORT, () => {
+  console.log(`Server running at port -> ${variables.PORT}`);
+  console.log(
+    `Documentation available at -> localhost:${variables.PORT}/api-docs/`
+  );
 });
 
-// Conexión a la base de datos
+// Database Conexion
 db.dbconnect();
 
 export default app;

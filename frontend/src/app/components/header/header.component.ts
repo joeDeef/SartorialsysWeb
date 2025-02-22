@@ -53,6 +53,11 @@ export class HeaderComponent {
       this.userName = user.name ? `${user.name} ${user.last_name}` : '';
       this.isAdmin = user.role === 'admin';  // Verificar si el usuario es admin
       this.cartID = user.cartID;
+    }else{
+      const user = this.authService.getUser();
+      this.userName = '';
+      this.isAdmin = false;
+      this.cartID = '';
     }
   }
 
@@ -60,6 +65,7 @@ export class HeaderComponent {
   logout(): void {
     this.authService.logout();
     this.checkAuthentication();  // Actualizamos el estado después de hacer logout
+
     this.router.navigate(['/home']); // Asegúrate de que '/perfil' es la ruta correcta
   }
 

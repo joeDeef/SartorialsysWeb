@@ -1,8 +1,8 @@
-import * as multiparty from 'multiparty'; // Importa multiparty correctamente
+import * as multiparty from "multiparty"; // Importa multiparty correctamente
 
 // Configuración del middleware
 const multipartyMiddleware = (req, res, next) => {
-  const form = new multiparty.Form({ uploadDir: './uploads' });
+  const form = new multiparty.Form({ uploadDir: "./uploads" });
 
   form.parse(req, (err, fields, files) => {
     if (err) {

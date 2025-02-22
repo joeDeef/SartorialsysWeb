@@ -1,0 +1,180 @@
+paths:
+  /orders/{cartId}:
+    post:
+      tags:
+        - Orders
+      summary: Place an order
+      description: Creates a new order from the specified cart.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Unique identifier for the cart
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shippingInfo:
+                  type: object
+                  properties:
+                    fullName:
+                      type: string
+                      example: "John Doe"
+                    address:
+                      type: string
+                      example: "123 Main St"
+                    city:
+                      type: string
+                      example: "New York"
+                    postalCode:
+                      type: string
+                      example: "10001"
+                paymentInfo:
+                  type: object
+                  properties:
+                    cardName:
+                      type: string
+                      example: "John Doe"
+                    cardNumber:
+                      type: string
+                      example: "4111111111111111"
+                    expirationDate:
+                      type: string
+                      example: "12/25"
+                    cvv:
+                      type: string
+                      example: "123"
+      responses:
+        '201':
+          description: Order placed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Order placed successfully"
+                  order:
+                    $ref: '#/components/schemas/Order'
+        '400':
+          description: Error creating order
+        '500':
+          description: Internal server error
+
+  /orders/{userId}:
+    get:
+      tags:
+        - Orders
+      summary: Retrieve orders for a user
+      description: Fetches all orders placed by the specified user.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Orders retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Orders retrieved successfully"
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+        '204':
+          description: No orders found
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ["Pendiente", "En proceso", "Enviado", "Entregado", "Cancelado", "Devuelto"]
+          example: "Pendiente"
+        user:
+          type: string
+          example: "60d4e73fbc3c6c001f0e9b0f"
+        shippingInfo:
+          type: object
+          properties:
+            fullName:
+              type: string
+              example: "John Doe"
+            address:
+              type: string
+              example: "123 Main St"
+            city:
+              type: string
+              example: "New York"
+            postalCode:
+              type: string
+              example: "10001"
+        paymentInfo:
+          type: object
+          properties:
+            cardName:
+              type: string
+              example: "John Doe"
+            cardNumber:
+              type: string
+              example: "4111111111111111"
+            expirationDate:
+              type: string
+              example: "12/25"
+            cvv:
+              type: string
+              example: "123"
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              productId:
+                type: string
+                example: "60d4e73fbc3c6c001f0e9b0d"
+              code:
+                type: string
+                example: "P12345"
+              name:
+                type: string
+                example: "Product Name"
+              unitPrice:
+                type: number
+                example: 20.99
+              size:
+                type: string
+                example: "M"
+              color:
+                type: string
+                example: "Red"
+              quantity:
+                type: number
+                example: 2
+              totalPrice:
+                type: number
+                example: 41.98
+        subtotal:
+          type: number
+          example: 100.50
+        orderDate:
+          type: string
+          format: date-time
+          example: "2025-02-22T12:34:56Z"
