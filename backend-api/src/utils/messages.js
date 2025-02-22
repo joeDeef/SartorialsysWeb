@@ -9,8 +9,8 @@ export const sendErrorResponse = (
 export const sendSuccessResponse = (
   res,
   message,
-  statusCode = 200,
-  data = null
+  data = null,
+  statusCode = 200
 ) => {
   data
     ? res.status(statusCode).json({ message, data })

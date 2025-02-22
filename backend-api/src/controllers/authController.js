@@ -11,7 +11,7 @@ export const loggingUser = async (req, res) => {
 
   try {
     const tokenLogin = await loginUserService(email, password);
-    sendSuccessResponse(res, "", 200, tokenLogin);
+    sendSuccessResponse(res, "Login successful", tokenLogin);
   } catch (error) {
     if (
       error instanceof WrongEmailError ||
