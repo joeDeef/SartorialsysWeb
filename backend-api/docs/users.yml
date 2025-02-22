@@ -22,7 +22,7 @@ paths:
                   message:
                     type: string
                     example: "User created successfully"
-                  userCreated:
+                  data:
                     $ref: '#/components/schemas/User'
         '500':
           description: Internal server error
@@ -50,7 +50,7 @@ paths:
                   message:
                     type: string
                     example: "Users retrieved successfully"
-                  users:
+                  data:
                     type: array
                     items:
                       $ref: '#/components/schemas/User'
@@ -94,7 +94,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User retrieved successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
         '404':
           description: User not found
           content:
@@ -144,7 +150,58 @@ paths:
                   message:
                     type: string
                     example: "User updated successfully"
-                  userUpdated:
+                  data:
+                    $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User not found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+    patch:
+      tags:
+        - Users
+      summary: Partially update a user
+      description: Updates certain fields of a user.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User updated successfully"
+                  data:
                     $ref: '#/components/schemas/User'
         '404':
           description: User not found
@@ -188,7 +245,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "User deleted successfully"
+                    example: "User deleted"
         '404':
           description: User not found
           content:
@@ -201,83 +258,6 @@ paths:
                     example: "User not found"
         '500':
           description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Internal server error"
-  /users/login:
-    post:
-      summary: User login
-      description: Authenticates a user and returns a JWT token along with user details (name, last name, role, cartID) if the credentials are valid.
-      tags:
-        - Authentication
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: user@example.com
-                  description: The email of the user.
-                password:
-                  type: string
-                  format: password
-                  example: secureUserPassword123
-                  description: The password of the user.
-              required:
-                - email
-                - password
-      responses:
-        '200':
-          description: Successful login, returns a JWT token along with user information.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    description: The JWT token for authenticated requests.
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-                  user:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: User's first name
-                        example: John
-                      last_name:
-                        type: string
-                        description: User's last name
-                        example: Doe
-                      role:
-                        type: string
-                        description: User's role (admin or user)
-                        example: user
-                      cartID:
-                        type: string
-                        description: The user's cart ID, used to retrieve cart details.
-                        example: 609b1f8b07f0b63b1fdbd11e
-        '400':
-          description: Incorrect email or password.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Incorrect Email/Unregistered User"
-        '500':
-          description: Internal server error.
           content:
             application/json:
               schema:
@@ -310,7 +290,7 @@ components:
           description: User's password
         role:
           type: string
-          description: User's Role (default -> user)
+          description: User's role (default -> user)
           example: user
           enum:
             - admin

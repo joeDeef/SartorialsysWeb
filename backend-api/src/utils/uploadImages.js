@@ -15,7 +15,6 @@ const uploadProductImages = async (files, folderName) => {
       const imageUrl = await saveCloudinary(pathFile, folderName);
       imageUrls.push(imageUrl);
     } catch (error) {
-      console.error("Error uploading image to Cloudinary:", error);
       throw new Error("Error uploading image");
     }
 

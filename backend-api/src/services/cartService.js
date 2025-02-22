@@ -10,24 +10,33 @@ import Product from "../models/Product.js";
  * @param {number} quantity - Quantity to add.
  * @returns {Promise<Object|null>} - Updated cart or null if not found.
  */
-export const addProductToCart = async (cartId, productCode, size, color, quantity) => {
+export const addProductToCart = async (
+  cartId,
+  productCode,
+  size,
+  color,
+  quantity
+) => {
   const cart = await Cart.findById(cartId);
   if (!cart) throw new Error("Cart not found");
 
   const product = await Product.findOne({ code: productCode });
   if (!product) throw new Error("Product not found");
 
-  const sizeData = product.inventory.find(s => s.size === size);
+  const sizeData = product.inventory.find((s) => s.size === size);
   if (!sizeData) throw new Error("Size not found for this product");
 
-  const colorData = sizeData.colors.find(c => c.name === color);
+  const colorData = sizeData.colors.find((c) => c.name === color);
   if (!colorData) throw new Error("Color not found for this product size");
 
-  if (colorData.amount < quantity) throw new Error("Not enough stock available");
+  if (colorData.amount < quantity)
+    throw new Error("Not enough stock available");
 
   const existingItem = cart.items.find(
-    item => item.product.toString() === product._id.toString() &&
-            item.size === size && item.color === color
+    (item) =>
+      item.product.toString() === product._id.toString() &&
+      item.size === size &&
+      item.color === color
   );
 
   if (existingItem) {
@@ -42,8 +51,8 @@ export const addProductToCart = async (cartId, productCode, size, color, quantit
   colorData.amount -= quantity;
   if (colorData.amount === 0) colorData.available = false;
 
-  sizeData.available = sizeData.colors.some(c => c.available);
-  product.available = product.inventory.some(s => s.available);
+  sizeData.available = sizeData.colors.some((c) => c.available);
+  product.available = product.inventory.some((s) => s.available);
 
   await product.save();
 
@@ -70,16 +79,27 @@ export const getCart = async (cartId) => {
  * @param {number} newQuantity - New quantity to set.
  * @returns {Promise<Object>} - Updated cart.
  */
-export const updateProductQuantity = async (cartId, productCode, size, color, newQuantity) => {
+export const updateProductQuantity = async (
+  cartId,
+  productCode,
+  size,
+  color,
+  newQuantity
+) => {
   const cart = await Cart.findById(cartId).populate("items.product").exec();
   if (!cart) throw new Error("Cart not found");
 
   const cartItem = cart.items.find(
-    (item) => item.product.code === productCode && item.size === size && item.color === color
+    (item) =>
+      item.product.code === productCode &&
+      item.size === size &&
+      item.color === color
   );
-  if (!cartItem) throw new Error("Product with given size and color not found in cart");
+  if (!cartItem)
+    throw new Error("Product with given size and color not found in cart");
 
-  if (newQuantity < 1) throw new Error("Quantity must be greater than or equal to 1");
+  if (newQuantity < 1)
+    throw new Error("Quantity must be greater than or equal to 1");
 
   const product = cartItem.product;
   const sizeData = product.inventory.find((s) => s.size === size);
@@ -92,7 +112,8 @@ export const updateProductQuantity = async (cartId, productCode, size, color, ne
 
   if (newQuantity > currentQuantity) {
     const quantityToDecrease = newQuantity - currentQuantity;
-    if (colorData.amount < quantityToDecrease) throw new Error("Not enough stock available");
+    if (colorData.amount < quantityToDecrease)
+      throw new Error("Not enough stock available");
     colorData.amount -= quantityToDecrease;
   } else {
     const quantityToIncrease = currentQuantity - newQuantity;
@@ -119,14 +140,23 @@ export const updateProductQuantity = async (cartId, productCode, size, color, ne
  * @param {string} color - Color of the product.
  * @returns {Promise<Object>} - Updated cart.
  */
-export const deleteProductFromCart = async (cartId, productCode, size, color) => {
+export const deleteProductFromCart = async (
+  cartId,
+  productCode,
+  size,
+  color
+) => {
   const cart = await Cart.findById(cartId).populate("items.product").exec();
   if (!cart) throw new Error("Cart not found");
 
   const productIndex = cart.items.findIndex(
-    (item) => item.product.code === productCode && item.size === size && item.color === color
+    (item) =>
+      item.product.code === productCode &&
+      item.size === size &&
+      item.color === color
   );
-  if (productIndex === -1) throw new Error("Product with given size and color not found in cart");
+  if (productIndex === -1)
+    throw new Error("Product with given size and color not found in cart");
 
   const cartItem = cart.items[productIndex];
   const product = cartItem.product;
@@ -142,7 +172,7 @@ export const deleteProductFromCart = async (cartId, productCode, size, color) =>
   colorData.available = colorData.amount > 0;
   sizeData.available = sizeData.colors.some((c) => c.available);
   product.available = product.inventory.some((s) => s.available);
-  
+
   cart.items.splice(productIndex, 1);
 
   await product.save();

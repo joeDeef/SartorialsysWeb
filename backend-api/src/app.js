@@ -24,7 +24,9 @@ app.use(router);
 // Init Serve
 app.listen(variables.PORT, () => {
   console.log(`Server running at port -> ${variables.PORT}`);
-  console.log(`Documentation available at -> localhost:${variables.PORT}/api-docs/`);
+  console.log(
+    `Documentation available at -> localhost:${variables.PORT}/api-docs/`
+  );
 });
 
 // Database Conexion

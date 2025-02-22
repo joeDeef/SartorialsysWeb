@@ -1,9 +1,9 @@
-import express from 'express';
-import * as orderController from '../controllers/ordersController.js'
+import express from "express";
+import * as orderController from "../controllers/orderController.js";
 
 const router = express.Router();
 
-router.post('/:cartId', orderController.saveOrder);
+router.post("/:cartId", orderController.saveOrder);
 
-router.get('/:userId', orderController.getOrders)
+router.get("/:userId", orderController.getOrders);
 export default router;
