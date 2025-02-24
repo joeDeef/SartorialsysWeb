@@ -1,15 +1,15 @@
 paths:
-  /orders/{cartId}:
+  /order/{cartId}:
     post:
       tags:
         - Orders
-      summary: Place an order
-      description: Creates a new order from the specified cart.
+      summary: Create a new order from the cart
+      description: Creates an order using the given cart ID and clears the cart after processing.
       parameters:
         - name: cartId
           in: path
           required: true
-          description: Unique identifier for the cart
+          description: The ID of the cart to create an order from
           schema:
             type: string
       requestBody:
@@ -21,37 +21,25 @@ paths:
               properties:
                 shippingInfo:
                   type: object
-                  properties:
-                    fullName:
-                      type: string
-                      example: "John Doe"
-                    address:
-                      type: string
-                      example: "123 Main St"
-                    city:
-                      type: string
-                      example: "New York"
-                    postalCode:
-                      type: string
-                      example: "10001"
+                  description: Shipping details for the order
                 paymentInfo:
                   type: object
-                  properties:
-                    cardName:
-                      type: string
-                      example: "John Doe"
-                    cardNumber:
-                      type: string
-                      example: "4111111111111111"
-                    expirationDate:
-                      type: string
-                      example: "12/25"
-                    cvv:
-                      type: string
-                      example: "123"
+                  description: Payment details for the order
+                  examples:
+            example:
+              shippingInfo:
+                fullName: "John Doe"
+                address: "123 Main St"
+                city: "New York"
+                postalCode: "10001"
+              paymentInfo:
+                cardName: "John Doe"
+                cardNumber: "4111111111111111"
+                expirationDate: "12/25"
+                cvv: "123"
       responses:
-        '201':
-          description: Order placed successfully
+        "201":
+          description: Order successfully created
           content:
             application/json:
               schema:
@@ -59,29 +47,79 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Order placed successfully"
-                  order:
+                    example: Order placed successfully
+                  data:
+                    type: object
+                    description: Details of the created order
                     $ref: '#/components/schemas/Order'
-        '400':
-          description: Error creating order
-        '500':
+        "400":
+          description: Bad request due to invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                SizeNotFoundError:
+                  value:
+                    message: "Size M not found for this product"
+                ColorNotFoundError:
+                  value:
+                    message: "Color Red not found for this product size"
+                InsufficientStockError:
+                  value:
+                    message: "Not enough stock available for Red (M). Available: 2"
+                InvalidQuantityError:
+                  value:
+                    message: "Quantity must be greater than or equal to 1. Given: 0"
+        "404":
+          description: Not found error for missing resources
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                CartNotFoundError:
+                  value:
+                    message: "Cart with ID 1234567890 not found"
+                ProductNotFoundError:
+                  value:
+                    message: "Product with code ABC123 not found"
+                ProductNotInCartError:
+                  value:
+                    message: "Product with code ABC123, size M, and color Red not found in cart"
+        "500":
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "Internal Server Error"
 
-  /orders/{userId}:
+  /order/{userId}:
     get:
       tags:
         - Orders
-      summary: Retrieve orders for a user
-      description: Fetches all orders placed by the specified user.
+      summary: Retrieve orders by user ID
+      description: Fetches all orders associated with a specific user.
       parameters:
         - name: userId
           in: path
           required: true
-          description: Unique identifier for the user
+          description: The ID of the user whose orders need to be fetched
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Orders retrieved successfully
           content:
             application/json:
@@ -90,15 +128,34 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Orders retrieved successfully"
-                  orders:
+                    example: Orders retrieved successfully
+                  data:
                     type: array
                     items:
+                      type: object
+                      description: List of user orders
                       $ref: '#/components/schemas/Order'
-        '204':
-          description: No orders found
-        '500':
+        "204":
+          description: No orders found for the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No orders found
+        "500":
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "Internal Server Error"
 
 components:
   schemas:
