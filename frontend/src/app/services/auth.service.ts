@@ -12,7 +12,7 @@ export class AuthService {
   private tokenKey = 'authToken';
   private userKey = 'authUser';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Enviar las credenciales al backend y recibir la respuesta
   login(email: string, password: string): Observable<any> {

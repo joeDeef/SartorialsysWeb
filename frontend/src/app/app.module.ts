@@ -16,6 +16,8 @@ import { OrderDetailModalComponent } from './components/order-detail-modal/order
 import { UsersPanelComponent } from './components/users-panel/users-panel.component';
 import { UserManageComponent } from './components/user-manage/user-manage.component';
 import { AddUserComponent } from './components/add-user/add-user.component';
+import { ProductsComponent } from './components/products/products.component';
+import { AddProductComponent } from './components/add-product/add-product.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { AddUserComponent } from './components/add-user/add-user.component';
     OrderDetailModalComponent,
     UsersPanelComponent,
     UserManageComponent,
-    AddUserComponent
+    AddUserComponent,
+    ProductsComponent,
+    AddProductComponent
   ],
   imports: [
     BrowserModule,

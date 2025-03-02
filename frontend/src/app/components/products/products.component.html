@@ -1,0 +1,52 @@
+<div class="container-wrapper">
+  <div class="sidebar">
+    <h2>Explorar por</h2>
+    <ul>
+      <li><a [routerLink]="['/products']">Todos los productos</a></li>
+      <li><a [routerLink]="['/products/Accesorio']">Accesorios</a></li>
+      <li><a [routerLink]="['/products/Camisa']">Camisas</a></li>
+      <li><a [routerLink]="['/products/Pantalón']">Pantalones</a></li>
+      <li><a [routerLink]="['/products/Terno']">Trajes</a></li>
+    </ul>
+
+    <h3>Filtrar por</h3>
+    <label for="price-range">Precio</label>
+    <select id="priceCondition" [(ngModel)]="priceCondition" (change)="applyFilters()">
+      <option value="greater">Mayor o igual</option>
+      <option value="less">Menor o igual</option>
+    </select>
+    
+    <div class="price-container">
+      <span class="currency">${{ priceFilter.toFixed(2) }}</span>
+      <input type="range" id="price-range" min="0" max="100" step="5" [(ngModel)]="priceFilter" (change)="applyFilters()">
+    </div>
+  </div>
+
+  <div class="products">
+    <div class="buttons">
+      <button *ngIf="isAdmin()" class="add-button" [routerLink]="['/admin-panel/products/add-product']">
+        Agregar Producto
+      </button>
+    </div>
+    
+    <div class="product-header">
+      <h1 *ngIf="currentCategory; else allProducts">Productos de {{ currentCategory }}</h1>
+      <ng-template #allProducts>
+        <h1>Todos los Productos</h1>
+      </ng-template>
+      <p>{{ filteredProducts.length }} productos</p>
+    </div>
+
+    <div class="container">
+      <a class="product-card" *ngFor="let product of filteredProducts" [routerLink]="['/products', product.category, product.code]">
+        <img *ngIf="product.images?.length" [src]="product.images?.[0]" [alt]="product.name" />
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.price | currency }}</p>
+      </a>
+    </div>
+
+    <div *ngIf="filteredProducts.length === 0" class="no-products">
+      <p>No hay productos disponibles para esta categoría.</p>
+    </div>
+  </div>
+</div>
