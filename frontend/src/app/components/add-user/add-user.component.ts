@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
-import { UserService } from 'src/app/services/user.services';
+import { UserService } from '../../services/user.service';
 import { ValidationService } from 'src/app/services/validation.service';
 
 @Component({
@@ -16,14 +16,13 @@ export class AddUserComponent {
     name: '',
     last_name: '',
     email: '',
-    password: '',
     role: 'user'
   };
 
-  constructor(private userService: UserService, private router: Router, private validatorService: ValidationService) {}
+  constructor(private userService: UserService, private router: Router, private validatorService: ValidationService) { }
 
   onSubmit() {
-    if(!this.validatorService.validateEmail(this.user.email)){
+    if (!this.validatorService.validateEmail(this.user.email)) {
       this.errorMessage = 'Ingrese un email válido.';
       return;
     }
@@ -34,9 +33,9 @@ export class AddUserComponent {
     }
 
     this.userService.addUser(this.user).subscribe({
-      next: (response) => {        
+      next: (response) => {
         alert('Usuario agregado con éxito');
-        this.router.navigate(['/administration/users']);  // Cambia '/usuarios' a la ruta deseada
+        this.router.navigate(['/admin-panel/users']);
       },
       error: (error) => {
         alert('Hubo un error al agregar el usuario');

@@ -8,7 +8,7 @@
 /* Sección del logo */
 .logo-section {
   width: 50%;
-  background-image: url('assets/logo.png'); /* Aquí se define la imagen de fondo */
+  background-image: url('../../../assets/logo.png');
   background-size: cover;
   background-position: center;
   height: 100%;

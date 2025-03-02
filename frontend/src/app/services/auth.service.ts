@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Global } from '../services/global.service';
+import { Global } from './global.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${Global.url}/users`;
+  private apiUrl = `${Global.url}/auth`;
   private tokenKey = 'authToken';
   private userKey = 'authUser';
 
@@ -19,9 +19,9 @@ export class AuthService {
     const credentials = { email, password };
     return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
-        if (response.token) {
-          this.saveToken(response.token);
-          this.saveUser(response.user);
+        if (response.data) {
+          this.saveToken(response.data.token);
+          this.saveUser(response.data.user);
         }
       })
     );
@@ -56,9 +56,5 @@ export class AuthService {
   // Verificar si el usuario está autenticado
   isAuthenticated(): boolean {
     return !!this.getToken();
-  }
-
-  register(user: { name: string, last_name: string, email: string, password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}`, user);
   }
 }

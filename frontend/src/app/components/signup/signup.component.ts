@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/services/auth.service';
-import { ValidationService } from 'src/app/services/validation.service';
+import { ValidationService } from '../../services/validation.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-signup',
@@ -19,7 +19,7 @@ export class SignupComponent {
   errorMessage: string = '';
 
   constructor(
-    private authService: AuthService, 
+    private userService: UserService, 
     private router: Router,
     private validationService: ValidationService) {}
 
@@ -53,7 +53,7 @@ export class SignupComponent {
     }
 
     // Si todas las validaciones pasan, se hace el registro
-    this.authService.register(this.user).subscribe(
+    this.userService.register(this.user).subscribe(
       response => {
         this.router.navigate(['/login']);
       },
