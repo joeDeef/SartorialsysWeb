@@ -18,6 +18,8 @@ import { UserManageComponent } from './components/user-manage/user-manage.compon
 import { AddUserComponent } from './components/add-user/add-user.component';
 import { ProductsComponent } from './components/products/products.component';
 import { AddProductComponent } from './components/add-product/add-product.component';
+import { ProductDetailComponent } from './components/product-detail/product-detail.component';
+import { ProductEditComponent } from './components/product-edit/product-edit.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { AddProductComponent } from './components/add-product/add-product.compon
     UserManageComponent,
     AddUserComponent,
     ProductsComponent,
-    AddProductComponent
+    AddProductComponent,
+    ProductDetailComponent,
+    ProductEditComponent,
   ],
   imports: [
     BrowserModule,

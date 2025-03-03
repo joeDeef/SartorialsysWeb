@@ -1,0 +1,195 @@
+.product-detail {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 40px;
+  background-color: #fff;
+}
+.product-image {
+  max-width: 400px;
+}
+.product-image img {
+  width: 100%;
+  border-radius: 8px;
+}
+.product-info {
+  max-width: 400px;
+}
+.product-info h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+.product-info p {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #333;
+}
+.product-info .color-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.product-info .color-options label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.product-info .color-options input {
+  display: none;
+}
+.product-info .color-options span {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  display: inline-block;
+}
+.product-info .color-options input:checked + span {
+  border: 2px solid black;
+}
+.product-info select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.product-info .quantity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.product-info .quantity button {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.product-info .quantity input {
+  width: 40px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.product-info .actions {
+  display: flex;
+  gap: 10px;
+}
+.product-info .actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.product-info .actions .add-to-cart {
+  background-color: black;
+  color: white;
+}
+.product-info .actions .buy-now {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+.actions,
+.extra-actions {
+  display: flex;
+  gap: 10px; /* Espaciado entre botones */
+  margin-top: 20px;
+}
+.delete,
+.update {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.delete {
+  background-color: #dc3545; /* Rojo */
+  color: white;
+}
+
+.update {
+  background-color: #28a745; /* Verde */
+  color: white;
+}
+
+button:hover {
+  opacity: 0.9; /* Ligero efecto al pasar el mouse */
+}
+
+.product-detail {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 40px;
+  background-color: #fff;
+}
+
+.product-images {
+  max-width: 600px;
+  position: relative;
+}
+
+.carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-inner {
+  display: none;
+  width: 100%;
+  max-width: 100%;
+}
+
+.carousel-inner.is-active {
+  display: block;
+}
+
+.carousel-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 30px;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+.carousel-control.prev {
+  left: 10px;
+}
+
+.carousel-control.next {
+  right: 10px;
+}
+
+.product-info {
+  max-width: 400px;
+  padding: 20px;
+}
+
+/* El resto de tus estilos existentes */

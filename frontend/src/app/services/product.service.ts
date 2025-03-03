@@ -37,24 +37,22 @@ export class ProductService {
     });
   }
 
-  /*
-  //ver libro por id 
-  public getProductsByCode(code:string):Observable<any>{ //devuelve observable de un producto
-    let headers=new HttpHeaders().set('Content-Type','application/json');
-    return this._httpClient.get<any>(`${this.url}/products/${code}`);
+  //ver Product por Id
+  public getProductsByCode(code: string): Observable<any> { //devuelve observable de un producto
+    return this._httpClient.get<any>(`${this.apiUrl}/${code}`);
   }
-  /*
 
-  
   //actualizar un nuevo producto 
-  public updateProduct(code:string,product:Product):Observable<any>{
-    let params=JSON.stringify(product);
-    let headers=new HttpHeaders().set('Content-Type','application/json');
-    return this._httpClient.put<any>(`${this.url}/products/${code}`,params,{headers:headers});
+  public updateProduct(code: string, product: IProduct): Observable<any> {
+    let params = JSON.stringify(product);
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this._httpClient.put<any>(`${this.apiUrl}/${code}`, params, { headers: headers });
   }
-  public deleteProduct(code:string):Observable<any>{
-    return this._httpClient.delete<any>(`${this.url}/products/${code}`);
+  public deleteProduct(code: string): Observable<any> {
+    return this._httpClient.delete<any>(`${this.apiUrl}/${code}`);
   }
-    */
+  public updateInventory(code: string, inventory: any) {
+    return ""
+  }
 
 }
