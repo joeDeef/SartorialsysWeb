@@ -7,7 +7,7 @@ export interface IProduct {
   inventory: IInventory[];
   available?: boolean;
   deleted?: boolean;
-  images?: string[];
+  images: string[];
 }
 
 export interface IInventory {

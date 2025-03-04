@@ -13,7 +13,7 @@ export class ProductService {
     this.apiUrl = `${Global.url}/products`;
   }
 
-  getProducts(category?: string): Observable<{ data: IProduct[] }> {
+  public getProducts(category?: string): Observable<{ data: IProduct[] }> {
     let url = `${this.apiUrl}`;
     if (category) {
       url += `?category=${category}`;
@@ -37,6 +37,16 @@ export class ProductService {
     });
   }
 
+  public deleteImages(productCode: string, imageName: string): Observable<any> {
+    let body = JSON.stringify({ imageName: imageName });
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+    
+    return this._httpClient.delete<any>(`${this.apiUrl}/delete-image/${productCode}`, { 
+      body: body, 
+      headers: headers 
+    });
+  }
+  
   //ver Product por Id
   public getProductsByCode(code: string): Observable<any> { //devuelve observable de un producto
     return this._httpClient.get<any>(`${this.apiUrl}/${code}`);
@@ -53,9 +63,21 @@ export class ProductService {
     return this._httpClient.delete<any>(`${this.apiUrl}/${code}`);
   }
 
-  public updateInventory(code: string, inventory: any) {
-    return ""
+  updateInventory(code: string, inventory: any[]): Observable<any> {
+    const inventoryData = {
+      inventory: inventory
+    };
+
+    return this._httpClient.patch<any>(`${this.apiUrl}/${code}`, inventoryData, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
   }
+
+  public updatePrice(code: string, price: any) {
+    return this._httpClient.patch<any>(`${this.apiUrl}/${code}`, { price: price }, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }  
 
   public addSize(code: string, inventory: IInventory | { inventory: IInventory[] }): Observable<any> {
     return this._httpClient.post<any>(`${this.apiUrl}/${code}/add-size`, inventory);

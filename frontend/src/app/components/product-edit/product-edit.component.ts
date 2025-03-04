@@ -34,8 +34,14 @@ export class ProductEditComponent {
     this._route.params.subscribe((params) => {
       const productId = params['id'];
       this._productService.getProductsByCode(productId).subscribe({
-        next: (reponse) => {
-          this.product = reponse.data;
+        next: (response) => {
+          this.product = response.data;
+  
+          // Aseguramos que product.images siempre sea un arreglo
+          if (!this.product.images) {
+            this.product.images = []; // Si es undefined, asignamos un arreglo vacío
+          }
+  
           this.loading = false;
           this.cdr.detectChanges(); // Detectar cambios
         },
@@ -46,17 +52,52 @@ export class ProductEditComponent {
       });
     });
   }
+  
 
   get isAccessory(): boolean {
     return this.product.category === 'Accessory';
   }
 
   updatePrice() {
-    alert("Precio Acualizado")
+    if (this.product.price < 0) {
+      alert('El precio debe ser un número mayor o igual a 0');
+      return;
+    }
+
+    this._productService.updatePrice(this.product.code, this.product.price)
+      .subscribe(
+        (response) => {
+          console.log('Precio actualizado exitosamente:', response);
+          alert('Precio actualizado correctamente');
+        },
+        (error) => {
+          console.error('Error al actualizar el precio:', error);
+          alert('Error al actualizar el precio');
+        }
+      );
   }
 
-  saveInventory(i: any) {
-    alert("Invetario Acualizado")
+  saveInventory(): void {
+    // Construir la estructura de inventario
+    const inventory = this.product.inventory.map(size => ({
+      size: size.size,
+      colors: size.colors.map(color => ({
+        name: color.name,
+        amount: color.amount
+      }))
+    }));
+
+    // Llamar al servicio para actualizar el inventario
+    this._productService.updateInventory(this.product.code, inventory).subscribe(
+      response => {
+        console.log('Inventario actualizado correctamente:', response);
+        alert('Inventario actualizado correctamente');
+      },
+      error => {
+        console.error('Error al actualizar el inventario:', error);
+        alert('Error al actualizar el inventario');
+      }
+    );
   }
 
   addSize(inventory: any): void {
@@ -115,9 +156,5 @@ export class ProductEditComponent {
   closeModalColor(): void {
     this.currentInvetory = null;
     window.location.reload();
-  }
-
-  añadirImagenes() {
-    alert("Añadir Imagenes")
   }
 }

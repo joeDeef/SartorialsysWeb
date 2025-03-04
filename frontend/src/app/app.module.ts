@@ -23,6 +23,7 @@ import { ProductEditComponent } from './components/product-edit/product-edit.com
 import { AddSizeProductModalComponent } from './components/add-size-product-modal/add-size-product-modal.component';
 import { AddColorProductModalComponent } from './components/add-color-product-modal/add-color-product-modal.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ProductImagesComponent } from './components/product-images/product-images.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ProductEditComponent,
     AddSizeProductModalComponent,
     AddColorProductModalComponent,
+    ProductImagesComponent,
   ],
   imports: [
     BrowserModule,

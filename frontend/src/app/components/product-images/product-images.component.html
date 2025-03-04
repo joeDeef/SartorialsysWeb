@@ -1,0 +1,21 @@
+<div class="product-images-container">
+  <h3>Imágenes Actuales</h3>
+  <div class="current-images">
+    <div *ngFor="let image of currentImages; let i = index" class="image-item">
+      <img [src]="image" alt="Imagen del producto" class="image-preview">
+      <button (click)="deleteImage(image)" class="delete-btn">Eliminar</button>
+    </div>
+  </div>
+
+  <h3>Cargar Nuevas Imágenes</h3>
+  <div class="preview-container">
+    <div *ngFor="let preview of newImagePreviews" class="preview-item">
+      <img [src]="preview" alt="Vista previa de la nueva imagen" class="image-preview">
+    </div>
+  </div>
+  
+  <input type="file" (change)="onImagesSelected($event)" multiple />
+  
+  <!-- Botón para enviar las imágenes al servidor -->
+  <button (click)="uploadNewImages()" class="upload-btn">Cargar Imágenes</button>
+</div>
