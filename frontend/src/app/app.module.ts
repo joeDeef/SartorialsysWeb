@@ -20,6 +20,9 @@ import { ProductsComponent } from './components/products/products.component';
 import { AddProductComponent } from './components/add-product/add-product.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { ProductEditComponent } from './components/product-edit/product-edit.component';
+import { AddSizeProductModalComponent } from './components/add-size-product-modal/add-size-product-modal.component';
+import { AddColorProductModalComponent } from './components/add-color-product-modal/add-color-product-modal.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -39,6 +42,8 @@ import { ProductEditComponent } from './components/product-edit/product-edit.com
     AddProductComponent,
     ProductDetailComponent,
     ProductEditComponent,
+    AddSizeProductModalComponent,
+    AddColorProductModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -46,6 +51,7 @@ import { ProductEditComponent } from './components/product-edit/product-edit.com
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

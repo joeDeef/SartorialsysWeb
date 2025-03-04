@@ -1,0 +1,70 @@
+<div class="modal-overlay">
+  <div class="modal-content">
+    <!-- Tabla de Inventario Actual -->
+    <h3>Inventario Actual</h3>
+    <table class="inventory-table">
+      <thead>
+        <tr>
+          <th *ngIf="!isAccessory">Talla</th>
+          <th>Colores</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let size of product.inventory">
+          <td *ngIf="!isAccessory">
+            <input type="text" [value]="size.size" class="form-input" disabled />
+          </td>
+          <td>
+            <div *ngFor="let color of size.colors" class="color-row">
+              <input type="text" [value]="color.name" class="form-input" disabled />
+              <input type="number" [value]="color.amount" class="form-input small-input" disabled />
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Tabla para Añadir Nuevo Inventario -->
+    <h3>Nuevo Inventario</h3>
+    
+    <!-- Botón para Añadir Nuevo Color -->
+    <button type="button" class="add-color-btn" (click)="addEmptyColorRow(0)">➕ Añadir Color</button>
+
+    <table class="inventory-table">
+      <thead>
+        <tr>
+          <th *ngIf="!isAccessory">Talla</th>
+          <th>Colores</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let size of newInventory; let i = index">
+          <td *ngIf="!isAccessory">
+            <select [(ngModel)]="size.size" class="form-input">
+              <option value="" disabled selected>Selecciona una talla</option>
+              <option value="S">S</option>
+              <option value="M">M</option>
+              <option value="L">L</option>
+              <option value="XL">XL</option>
+            </select>
+          </td>
+          <td>
+            <div *ngFor="let color of size.colors; let j = index" class="color-row">
+              <select [(ngModel)]="color.name" class="form-input">
+                <option *ngFor="let c of availableColors" [value]="c">{{ c }}</option>
+              </select>
+              <input type="number" [(ngModel)]="color.amount" min="0" class="form-input small-input" />
+              <button type="button" class="remove-color-btn" (click)="removeColor(i, j)">🗑</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Botones de acción -->
+    <div class="modal-actions">
+      <button class="accept-btn" (click)="addNewInventory()">Añadir</button>
+      <button class="cancel-btn" (click)="closeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>

@@ -9,8 +9,8 @@ import { ProductService } from 'src/app/services/product.service';
   styleUrls: ['./product-edit.component.css']
 })
 export class ProductEditComponent {
-    @ViewChild('fileInput') fileInput!: ElementRef;
-  
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
   product: IProduct = {
     code: '',
     name: '',
@@ -23,21 +23,20 @@ export class ProductEditComponent {
   selectedImages: File[] = [];
   loading: boolean = true;
   availableColors = ['Negro', 'Blanco', 'Azul', 'Verde', 'Celeste', 'Rojo', 'Violeta', 'Plomo', 'Café'];
+  currentInvetory: any = null;
 
   constructor(
     private _route: ActivatedRoute,
-    private _router: Router,
-    private _apiService: ProductService,
+    private _productService: ProductService,
     private cdr: ChangeDetectorRef // Agregado ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this._route.params.subscribe((params) => {
       const productId = params['id'];
-      this._apiService.getProductsByCode(productId).subscribe({
-        next: (data: IProduct) => {
-          this.product = data;
-          this.previewImages = data.images || [];
+      this._productService.getProductsByCode(productId).subscribe({
+        next: (reponse) => {
+          this.product = reponse.data;
           this.loading = false;
           this.cdr.detectChanges(); // Detectar cambios
         },
@@ -87,8 +86,8 @@ export class ProductEditComponent {
     return this.product.category === 'Accessory';
   }
 
-   /** Abre el selector de archivos */
-   openFileInput() {
+  /** Abre el selector de archivos */
+  openFileInput() {
     this.fileInput.nativeElement.click();
   }
 
@@ -113,17 +112,37 @@ export class ProductEditComponent {
     input.value = '';
   }
 
-  
+  updatePrice() {
+    alert("Precio Acualizado")
+  }
 
-  guardarCambios() {
-    this._apiService.updateProduct(this.product.code, this.product).subscribe({
-      next: (updatedProduct) => {
-        console.log('Producto actualizado correctamente:', updatedProduct);
-        this._router.navigate(['/administration/products']);
-      },
-      error: (error) => {
-        console.error('Error al actualizar el producto:', error);
-      },
-    });
+  saveInventory(i: any) {
+    alert("Invetario Acualizado")
+  }
+
+  addSize(inventory: any): void {
+    this.currentInvetory = inventory;
+  }
+
+  addColor() {
+    alert("Añadir Color")
+  }
+
+  removeSizeInvetory(i: any) {
+    alert("Quitar Talla")
+  }
+
+  removeColorInvetory(i: any, j: any) {
+    alert("Quitar Color")
+  }
+
+  añadirImagenes() {
+    alert("Añadir Imagenes")
+  }
+
+  // Método para cerrar el modal
+  closeModal(): void {
+    this.currentInvetory = null;  // Resetea la variable para cerrar el modal
+    window.location.reload();
   }
 }

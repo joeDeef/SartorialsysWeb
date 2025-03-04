@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IProduct } from '../models/product.model';
+import { IInventory, IProduct } from '../models/product.model';
 import { Global } from './global.service';
 
 @Injectable({
@@ -43,7 +43,7 @@ export class ProductService {
   }
 
   //actualizar un nuevo producto 
-  public updateProduct(code: string, product: IProduct): Observable<any> {
+  public updateProduct(code: string, product: any): Observable<any> {
     let params = JSON.stringify(product);
     let headers = new HttpHeaders().set('Content-Type', 'application/json');
     return this._httpClient.put<any>(`${this.apiUrl}/${code}`, params, { headers: headers });
@@ -55,4 +55,7 @@ export class ProductService {
     return ""
   }
 
+  public addSize(code: string, inventory: IInventory | { inventory: IInventory[] }): Observable<any> {
+    return this._httpClient.post<any>(`${this.apiUrl}/${code}/add-size`, inventory);
+  }
 }
