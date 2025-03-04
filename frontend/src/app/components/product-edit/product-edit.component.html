@@ -46,57 +46,58 @@
       </div>
 
       <!-- Tabla de Inventario -->
-      <div class="form-group">
-        <label>Inventario</label>
-        <button (click)="addSize(product.inventory)" class="action-btn add-btn">
-          <i class="fas fa-plus"> Añadir Talla</i>
-        </button>
-        <table class="inventory-table">
-          <thead>
-            <tr>
-              <th *ngIf="!isAccessory">Talla</th>
-              <th>Colores</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let size of product.inventory; let i = index">
-              <td *ngIf="!isAccessory">
-                <select [(ngModel)]="size.size" name="size-{{ i }}" class="form-input" disabled>
-                  <option value="" disabled selected>Selecciona una talla</option>
-                  <option value="S">S</option>
-                  <option value="M">M</option>
-                  <option value="L">L</option>
-                  <option value="XL">XL</option>
-                </select>
-              </td>
-              <td>
-                <div *ngFor="let color of size.colors; let j = index" class="color-row">
-                  <select [(ngModel)]="color.name" name="color-{{ i }}-{{ j }}" class="form-input" disabled>
-                    <option *ngFor="let c of availableColors" [value]="c">{{ c }}</option>
-                  </select>
-                  <input type="number" [(ngModel)]="color.amount" name="amount-{{ i }}-{{ j }}" min="0"
-                    class="form-input small-input" />
-                  <button type="button" (click)="removeColorInvetory(i, j)" class="action-btn">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-              <td>
-                <button type="button" (click)="saveInventory(i)" class="action-btn add-btn">
-                  <i class="fas fa-save"> Guardar</i>
-                </button>
-                <button type="button" (click)="removeSizeInvetory(i)" class="action-btn">
-                  <i class="fas fa-trash"> Eliminar</i>
-                </button>
-                <button type="button" (click)="addColor()" class="action-btn add-btn">
-                  <i class="fas fa-plus"> Añadir Color</i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+<div class="form-group">
+  <label>Inventario</label>
+  <button (click)="addSize(product.inventory)" class="action-btn add-btn">
+    <i class="fas fa-plus"> Añadir Talla</i>
+  </button>
+  <table class="inventory-table">
+    <thead>
+      <tr>
+        <th *ngIf="!isAccessory">Talla</th>
+        <th>Colores</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let size of product.inventory; let i = index">
+        <td *ngIf="!isAccessory">
+          <select [(ngModel)]="size.size" name="size-{{ i }}" class="form-input" disabled>
+            <option value="" disabled selected>Selecciona una talla</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+          </select>
+        </td>
+        <td>
+          <div *ngFor="let color of size.colors; let j = index" class="color-row">
+            <select [(ngModel)]="color.name" name="color-{{ i }}-{{ j }}" class="form-input" disabled>
+              <option *ngFor="let c of availableColors" [value]="c">{{ c }}</option>
+            </select>
+            <input type="number" [(ngModel)]="color.amount" name="amount-{{ i }}-{{ j }}" min="0"
+              class="form-input small-input" />
+            <button type="button" (click)="removeColorInvetory(i, j)" class="action-btn">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+        <td>
+          <button (click)="saveInventory(i)" class="action-btn add-btn">
+            <i class="fas fa-save"> Guardar</i>
+          </button>
+          <button (click)="removeSizeInvetory(i)" class="action-btn">
+            <i class="fas fa-trash"> Eliminar</i>
+          </button>
+          <button (click)="addColor(size)" class="action-btn add-btn">
+            <i class="fas fa-plus"> Añadir Color</i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
     </form>
   </div>
 </ng-container>
@@ -105,4 +106,5 @@
   <p>Cargando producto...</p>
 </ng-container>
 
-<app-add-size-product-modal *ngIf="currentInvetory" [product]="product" (close)="closeModal()"></app-add-size-product-modal>
+<app-add-size-product-modal *ngIf="currentInvetory" [product]="product" (close)="closeModalSize()"></app-add-size-product-modal>
+<app-add-color-product-modal *ngIf="currentSize" [code]="product.code" [selectedSize]="currentSize" (close)="closeModalColor()"></app-add-color-product-modal>

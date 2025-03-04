@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IInventory, IProduct } from '../models/product.model';
+import { IColor, IInventory, IProduct } from '../models/product.model';
 import { Global } from './global.service';
 
 @Injectable({
@@ -48,14 +48,20 @@ export class ProductService {
     let headers = new HttpHeaders().set('Content-Type', 'application/json');
     return this._httpClient.put<any>(`${this.apiUrl}/${code}`, params, { headers: headers });
   }
+  
   public deleteProduct(code: string): Observable<any> {
     return this._httpClient.delete<any>(`${this.apiUrl}/${code}`);
   }
+
   public updateInventory(code: string, inventory: any) {
     return ""
   }
 
   public addSize(code: string, inventory: IInventory | { inventory: IInventory[] }): Observable<any> {
     return this._httpClient.post<any>(`${this.apiUrl}/${code}/add-size`, inventory);
+  }
+
+  public addColor(code: string, size: string, inventoryData: { colors: IColor[] }) {
+    return this._httpClient.post(`${this.apiUrl}/${code}/${size}/add-color`, inventoryData);
   }
 }

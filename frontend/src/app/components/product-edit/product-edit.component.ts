@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IProduct } from 'src/app/models/product.model';
+import { IInventory, IProduct } from 'src/app/models/product.model';
 import { ProductService } from 'src/app/services/product.service';
 
 @Component({
@@ -24,6 +24,7 @@ export class ProductEditComponent {
   loading: boolean = true;
   availableColors = ['Negro', 'Blanco', 'Azul', 'Verde', 'Celeste', 'Rojo', 'Violeta', 'Plomo', 'Café'];
   currentInvetory: any = null;
+  currentSize: any = null;
 
   constructor(
     private _route: ActivatedRoute,
@@ -46,34 +47,6 @@ export class ProductEditComponent {
         },
       });
     });
-  }
-
-  /** Agrega una nueva talla con un color vacío */
-  addEmptySizeRow() {
-    this.product.inventory.push({ size: '', colors: [{ name: '', amount: 0 }] });
-    this.cdr.detectChanges();
-  }
-
-  /** Agrega un nuevo color a una talla específica */
-  addEmptyColorRow(sizeIndex: number) {
-    this.product.inventory[sizeIndex].colors.push({ name: '', amount: 0 });
-    this.cdr.detectChanges();
-  }
-
-  /** Elimina una talla, asegurando que al menos una esté presente */
-  removeSize(index: number) {
-    this.product.inventory.splice(index, 1);
-    if (this.product.inventory.length === 0) {
-      this.addEmptySizeRow();
-    }
-  }
-
-  /** Elimina un color, asegurando que al menos uno esté presente en cada talla */
-  removeColor(sizeIndex: number, colorIndex: number) {
-    this.product.inventory[sizeIndex].colors.splice(colorIndex, 1);
-    if (this.product.inventory[sizeIndex].colors.length === 0) {
-      this.product.inventory[sizeIndex].colors.push({ name: '', amount: 0 });
-    }
   }
 
   /** Elimina una imagen de la lista y de la previsualización */
@@ -124,10 +97,10 @@ export class ProductEditComponent {
     this.currentInvetory = inventory;
   }
 
-  addColor() {
-    alert("Añadir Color")
+  addColor(selectedSize: IInventory) {
+    this.currentSize = selectedSize;  // Pasamos la talla seleccionada al modal
   }
-
+  
   removeSizeInvetory(i: any) {
     alert("Quitar Talla")
   }
@@ -141,7 +114,12 @@ export class ProductEditComponent {
   }
 
   // Método para cerrar el modal
-  closeModal(): void {
+  closeModalSize(): void {
+    this.currentInvetory = null;  // Resetea la variable para cerrar el modal
+    window.location.reload();
+  }
+
+  closeModalColor(): void {
     this.currentInvetory = null;  // Resetea la variable para cerrar el modal
     window.location.reload();
   }

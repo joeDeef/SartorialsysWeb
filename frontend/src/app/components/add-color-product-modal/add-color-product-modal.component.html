@@ -1,1 +1,62 @@
-<p>add-color-product-modal works!</p>
+<div class="modal-overlay">
+  <div class="modal-content">
+    <!-- Tabla de Inventario Actual (Colores de la Talla Seleccionada) -->
+    <h3>Colores para la Talla {{ selectedSize.size }}</h3>
+    <table class="inventory-table">
+      <thead>
+        <tr>
+          <th>Colores</th>
+          <th>Cantidad</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let color of selectedSize.colors; let i = index">
+          <td>
+            <input type="text" [(ngModel)]="color.name" class="form-input" disabled />
+          </td>
+          <td>
+            <input type="number" [(ngModel)]="color.amount" min="0" class="form-input small-input" disabled />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Formulario para Añadir Nuevo Color -->
+    <h3>Añadir Nuevo Color</h3>
+    <form (ngSubmit)="onSubmit()">
+      <!-- Tabla para añadir colores -->
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>Color</th>
+            <th>Cantidad</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let color of newColors; let i = index" class="color-row">
+            <td class="color-input">
+              <select [(ngModel)]="color.name" name="colorName{{i}}" class="form-input" required>
+                <option *ngFor="let c of availableColors" [value]="c">{{ c }}</option>
+              </select>
+            </td>
+            <td class="amount-input">
+              <input type="number" [(ngModel)]="color.amount" name="colorAmount{{i}}" min="0" class="form-input small-input" required />
+            </td>
+            <td class="remove-btn">
+              <button type="button" (click)="removeNewColor(i)" class="remove-color-btn">🗑</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button type="button" class="add-color-btn" (click)="addNewColorRow()">➕ Añadir Color</button>
+
+      <!-- Botones de Acción -->
+      <div class="modal-actions">
+        <button type="submit" class="accept-btn">Guardar</button>
+        <button type="button" class="cancel-btn" (click)="closeModal()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
