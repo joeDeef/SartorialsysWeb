@@ -19,8 +19,6 @@ export class ProductEditComponent {
     inventory: [{ size: '', colors: [{ name: '', amount: 0 }] }],
     images: []
   };
-  previewImages: string[] = [];
-  selectedImages: File[] = [];
   loading: boolean = true;
   availableColors = ['Negro', 'Blanco', 'Azul', 'Verde', 'Celeste', 'Rojo', 'Violeta', 'Plomo', 'Café'];
   currentInvetory: any = null;
@@ -49,40 +47,8 @@ export class ProductEditComponent {
     });
   }
 
-  /** Elimina una imagen de la lista y de la previsualización */
-  removeImage(index: number) {
-    this.selectedImages.splice(index, 1);
-    this.previewImages.splice(index, 1);
-  }
-
   get isAccessory(): boolean {
     return this.product.category === 'Accessory';
-  }
-
-  /** Abre el selector de archivos */
-  openFileInput() {
-    this.fileInput.nativeElement.click();
-  }
-
-  /** Maneja la carga y previsualización de imágenes */
-  onImageChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
-
-    const files: File[] = Array.from(input.files);
-    files.forEach(file => {
-      this.selectedImages.push(file);
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        if (e.target?.result) {
-          this.previewImages.push(e.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Resetea el input para permitir seleccionar las mismas imágenes nuevamente
-    input.value = '';
   }
 
   updatePrice() {
@@ -98,29 +64,60 @@ export class ProductEditComponent {
   }
 
   addColor(selectedSize: IInventory) {
-    this.currentSize = selectedSize;  // Pasamos la talla seleccionada al modal
-  }
-  
-  removeSizeInvetory(i: any) {
-    alert("Quitar Talla")
+    this.currentSize = selectedSize;
   }
 
-  removeColorInvetory(i: any, j: any) {
-    alert("Quitar Color")
+  // Método para eliminar una talla del inventario
+  removeSizeInvetory(sizeIndex: number): void {
+    if (confirm('¿Estás seguro de que deseas eliminar esta talla del inventario?')) {
+      const size = this.product.inventory[sizeIndex];
+      this.product.inventory.splice(sizeIndex, 1);
+
+      this._productService.removeSize(this.product.code, size.size)
+        .subscribe(
+          response => {
+            console.log('Talla eliminada exitosamente:', response);
+            window.location.reload();
+          },
+          error => {
+            console.error('Error al eliminar la talla:', error);
+          }
+        );
+    }
   }
 
-  añadirImagenes() {
-    alert("Añadir Imagenes")
+  removeColorInvetory(sizeIndex: number, colorIndex: number): void {
+    if (confirm('¿Estás seguro de que deseas eliminar este color del inventario?')) {
+      // Obtener la talla y el color que se eliminarán
+      const size = this.product.inventory[sizeIndex];
+      const color = size.colors[colorIndex];
+
+      size.colors.splice(colorIndex, 1);
+
+      this._productService.removeColor(this.product.code, size.size, color.name)
+        .subscribe(
+          response => {
+            console.log('Color eliminado exitosamente:', response);
+          },
+          error => {
+            console.error('Error al eliminar el color:', error);
+          }
+        );
+    }
   }
 
   // Método para cerrar el modal
   closeModalSize(): void {
-    this.currentInvetory = null;  // Resetea la variable para cerrar el modal
+    this.currentInvetory = null;
     window.location.reload();
   }
 
   closeModalColor(): void {
-    this.currentInvetory = null;  // Resetea la variable para cerrar el modal
+    this.currentInvetory = null;
     window.location.reload();
+  }
+
+  añadirImagenes() {
+    alert("Añadir Imagenes")
   }
 }

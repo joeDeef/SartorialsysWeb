@@ -64,4 +64,12 @@ export class ProductService {
   public addColor(code: string, size: string, inventoryData: { colors: IColor[] }) {
     return this._httpClient.post(`${this.apiUrl}/${code}/${size}/add-color`, inventoryData);
   }
+
+  public removeSize(code: string, size: string): Observable<any> {
+    return this._httpClient.delete<any>(`${this.apiUrl}/${code}/${size}/remove`);
+  }
+
+  public removeColor(code: string, size: string, color: string) {
+    return this._httpClient.delete(`${this.apiUrl}/${code}/${size}/${color}/remove`);
+  }
 }
