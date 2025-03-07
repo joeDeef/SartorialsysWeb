@@ -7,25 +7,22 @@
         <h2>Mi carrito</h2>
         <div class="cart-items-container">
             <div *ngFor="let item of cart.items" class="cart-item">
-                <img [src]="productImages[item.product.code]" *ngIf="productImages[item.product.code]"
-                    alt="{{ item.product.name }}">
+                <img [src]="item.product.images[0]" *ngIf="item.product.images[0]" alt="{{ item.product.name }}">
                 <div class="item-details">
                     <h3>{{ item.product.name }}</h3>
                     <p>{{ item.product.price | currency }}</p>
-                    <!--
-                    <p>Color: {{ item.product.color }}</p>
-                    <p>Talla: {{ item.product.size }}</p>
-                -->
+                    <p>Color: {{ item.color }}</p>
+                    <p>Talla: {{ item.size }}</p>
                 </div>
                 <div class="actions">
                     <div class="quantity-selector">
-                        <button (click)="updateQuantity(item.product.code, item.quantity - 1)">−</button>
+                        <button (click)="updateQuantity(item, item.quantity - 1)">−</button>
                         <input type="number" [(ngModel)]="item.quantity"
-                            (ngModelChange)="updateQuantity(item.product.code, item.quantity)" min="1" />
-                        <button (click)="updateQuantity(item.product.code, item.quantity + 1)">+</button>
+                            (ngModelChange)="updateQuantity(item, item.quantity)" min="1" />
+                        <button (click)="updateQuantity(item, item.quantity + 1)">+</button>
                     </div>
                     <p>{{ (item.product.price * item.quantity) | currency }}</p>
-                    <button (click)="removeFromCart(item.product.code)"><i class="ti ti-trash"></i></button>
+                    <button (click)="removeFromCart(item)"><i class="ti ti-trash"></i></button>
                 </div>
             </div>
         </div>

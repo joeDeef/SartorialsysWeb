@@ -34,7 +34,7 @@ export class CartService {
     let headers = new HttpHeaders().set('Content-Type', 'application/json');
     return this._http.delete<any>(`${this.url}/${cartId}`, {
       headers: headers,
-      body: itemData,  // Aquí es donde se incluye el cuerpo
+      body: itemData,
     });
   }
   
