@@ -24,6 +24,9 @@ import { AddSizeProductModalComponent } from './components/add-size-product-moda
 import { AddColorProductModalComponent } from './components/add-color-product-modal/add-color-product-modal.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProductImagesComponent } from './components/product-images/product-images.component';
+import { CartModalComponent } from './components/cart-modal/cart-modal.component';
+import { CartMainComponent } from './components/cart-main/cart-main.component';
+import { CheckoutComponent } from './components/checkout/checkout.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +49,9 @@ import { ProductImagesComponent } from './components/product-images/product-imag
     AddSizeProductModalComponent,
     AddColorProductModalComponent,
     ProductImagesComponent,
+    CartModalComponent,
+    CartMainComponent,
+    CheckoutComponent,
   ],
   imports: [
     BrowserModule,

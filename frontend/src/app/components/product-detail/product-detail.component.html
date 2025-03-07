@@ -3,7 +3,8 @@
     <div class="product-images">
       <div class="carousel">
         <!-- Carrusel -->
-        <div class="carousel-inner" [ngClass]="{ 'is-active': currentIndex === i }" *ngFor="let image of product.images; let i = index">
+        <div class="carousel-inner" [ngClass]="{ 'is-active': currentIndex === i }"
+          *ngFor="let image of product.images; let i = index">
           <img [src]="image" alt="{{ product.name }}" class="carousel-image" />
         </div>
         <!-- Botones de navegación -->
@@ -28,6 +29,7 @@
       <div *ngIf="selectedSize" class="color-options">
         <label for="color">Selecciona un color:</label>
         <select [(ngModel)]="selectedColor">
+          <option value="">Elegir</option> <!-- Opción vacía por defecto -->
           <option *ngFor="let color of getAvailableColorsForSize(selectedSize)" [value]="color.name">
             {{ color.name }}
           </option>
@@ -43,12 +45,13 @@
 
       <div class="actions">
         <button class="add-to-cart" (click)="addToCart()">Agregar al carrito</button>
-        <button class="buy-now">Realizar compra</button>
+        <button class="buy-now" (click)="completePurchase()">Realizar compra</button>
       </div>
 
       <div class="extra-actions">
         <button class="delete" (click)="eliminarProducto(product.code)" *ngIf="isAdmin()">Eliminar</button>
-        <button class="update" [routerLink]="['/admin-panel/products/edit-product',product.code]" *ngIf="isAdmin()">Actualizar</button>
+        <button class="update" [routerLink]="['/admin-panel/products/edit-product',product.code]"
+          *ngIf="isAdmin()">Actualizar</button>
       </div>
     </div>
   </div>

@@ -19,16 +19,17 @@ export class ProductDetailComponent implements OnInit {
   loading: boolean = false;
   isAdminRoute: boolean = false;
   currentIndex: number = 0;  // Índice de la imagen actual en el carrusel
+  cartId: string | null = '';
 
   constructor(
-    private _route: ActivatedRoute, 
-    private _productService: ProductService, 
-    private _cartService: CartService, 
+    private _route: ActivatedRoute,
+    private _productService: ProductService,
+    private _cartService: CartService,
     private _authService: AuthService,
     private _router: Router) {
   }
   ngOnInit(): void {
-    //this.cartId = this.getCartIdFromLocalStorage();
+    this.cartId = this.getCartIdFromLocalStorage();
 
     this._route.params.subscribe({
       next: (params: Params) => {
@@ -76,13 +77,25 @@ export class ProductDetailComponent implements OnInit {
 
   // Método para manejar el cambio de talla
   onSizeChange() {
-    if (this.selectedSize) {
-      // Lógica adicional si es necesario
-    }
+    this.selectedColor = "";
   }
 
   addToCart() {
-    // Lógica para agregar al carrito
+    if (!this.cartId) {
+      alert('No se encontró el carrito del usuario. Por favor, inicia sesión.');
+      return;
+    }
+    const selectedProduct = this.getProductSelection();
+
+    this._cartService.addToCart(this.cartId, selectedProduct).subscribe(
+      response => {
+        alert('Producto agregado al carrito exitosamente');
+      },
+      error => {
+        alert('Error al agregar producto al carrito');
+        console.error('Error al añadir producto al carrito:', error);
+      }
+    );
   }
 
   incrementar() {
@@ -118,5 +131,27 @@ export class ProductDetailComponent implements OnInit {
 
   isAdmin(): boolean {
     return this._authService.getUser()?.role === "admin";
+  }
+
+  completePurchase() {
+    this._router.navigate(['/cart-main']);
+  }
+
+  getCartIdFromLocalStorage(): string | null {
+    const userData = localStorage.getItem('authUser');
+    if (userData) {
+      const user = JSON.parse(userData);
+      return user.cartID || null;
+    }
+    return null;
+  }
+
+  getProductSelection(): any {
+    return {
+      productCode: this.product.code,
+      size: this.selectedSize,
+      color: this.selectedColor,
+      quantity: this.cantidad
+    };
   }
 }

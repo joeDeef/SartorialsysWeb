@@ -1,0 +1,52 @@
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+</head>
+
+<div class="main-cart-container">
+    <div class="cart-section">
+        <h2>Mi carrito</h2>
+        <div class="cart-items-container">
+            <div *ngFor="let item of cart.items" class="cart-item">
+                <img [src]="productImages[item.product.code]" *ngIf="productImages[item.product.code]"
+                    alt="{{ item.product.name }}">
+                <div class="item-details">
+                    <h3>{{ item.product.name }}</h3>
+                    <p>{{ item.product.price | currency }}</p>
+                    <!--
+                    <p>Color: {{ item.product.color }}</p>
+                    <p>Talla: {{ item.product.size }}</p>
+                -->
+                </div>
+                <div class="actions">
+                    <div class="quantity-selector">
+                        <button (click)="updateQuantity(item.product.code, item.quantity - 1)">−</button>
+                        <input type="number" [(ngModel)]="item.quantity"
+                            (ngModelChange)="updateQuantity(item.product.code, item.quantity)" min="1" />
+                        <button (click)="updateQuantity(item.product.code, item.quantity + 1)">+</button>
+                    </div>
+                    <p>{{ (item.product.price * item.quantity) | currency }}</p>
+                    <button (click)="removeFromCart(item.product.code)"><i class="ti ti-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección del resumen del pedido -->
+    <div class="order-summary">
+        <h3>Resumen del pedido</h3>
+        <p class="subtotal">
+            <span>Subtotal</span>
+            <span>{{ cart.totalPrice | currency }}</span>
+        </p>
+        <p class="envio">
+            <span>Envío</span>
+            <span>GRATIS</span>
+        </p>
+        <p class="total">
+            <span>Total</span>
+            <span>{{ cart.totalPrice | currency }}</span>
+        </p>
+        <button class="checkout-btn" (click)="goToCheckout()">Finalizar compra</button>
+        <p><i class="ti ti-lock"></i> Pago seguro</p>
+    </div>
+</div>

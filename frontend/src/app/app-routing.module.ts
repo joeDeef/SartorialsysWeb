@@ -12,6 +12,9 @@ import { ProductsComponent } from './components/products/products.component';
 import { AddProductComponent } from './components/add-product/add-product.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { ProductEditComponent } from './components/product-edit/product-edit.component';
+import { CartModalComponent } from './components/cart-modal/cart-modal.component';
+import { CheckoutComponent } from './components/checkout/checkout.component';
+import { CartMainComponent } from './components/cart-main/cart-main.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -38,6 +41,11 @@ const routes: Routes = [
   { path: 'products/:category', component: ProductsComponent },
   { path: 'products', component: ProductsComponent },
   { path: 'products/:category/:id', component: ProductDetailComponent },
+
+  //Carrito
+  { path: 'cart', component: CartModalComponent, outlet: 'modal' },
+  { path: 'checkout', component: CheckoutComponent},
+  { path: 'cart-main', component: CartMainComponent},
 
   { path: '**', redirectTo: 'home' }
 ];
