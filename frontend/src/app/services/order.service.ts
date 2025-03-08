@@ -14,8 +14,8 @@ export class OrderService {
   constructor(private http: HttpClient) { }
 
   // Método para obtener pedidos del usuario
-  getOrders(userId: string): Observable<{ message: string, orders: Order[] }> {
-    return this.http.get<{ message: string, orders: Order[] }>(`${this.apiUrl}/${userId}`);
+  getOrders(userId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${userId}`);
   }
 
   processOrder(cartId: any,order: any): Observable<any> {

@@ -28,7 +28,7 @@ export class ProfileComponent {
     // Si el usuario está autenticado, obtener los pedidos
     if (this.user && this.user.id) {
       this.orderService.getOrders(this.user.id).subscribe(response => {
-        this.orders = response.orders;  // Asignamos los pedidos a la variable 'orders'
+        this.orders = response.data;  // Asignamos los pedidos a la variable 'orders'
       });
     }
   }

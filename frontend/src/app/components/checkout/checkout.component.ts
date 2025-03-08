@@ -25,7 +25,7 @@ export class CheckoutComponent implements OnInit {
 
     this.cartService.getCart(this.cartId).subscribe(
       (response) => {
-        this.cart = response.cart;
+        this.cart = response.data;
       },
       (error) => {
         console.error('Error al cargar el carrito:', error);
@@ -35,11 +35,10 @@ export class CheckoutComponent implements OnInit {
 
   getCartIdFromLocalStorage(): string {
     const userData = localStorage.getItem('authUser');
-    if (userData) {
-      const user = JSON.parse(userData);
-      return user.cartID || '';
-    }
-    return '';
+    if (!userData) {
+      return '';
+    } 
+    return JSON.parse(userData).cartID;
   }
 
   processPayment() {  
