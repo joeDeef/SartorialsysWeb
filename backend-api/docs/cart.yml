@@ -1,5 +1,5 @@
 paths:
-  /carts/{cartId}:
+  /cart/{cartId}:
     post:
       tags:
         - Carts
@@ -46,26 +46,6 @@ paths:
                     $ref: '#/components/schemas/Cart'
         '404':
           description: Cart or product not found
-        '400':
-          description: Not enough stock available
-        '500':
-          description: Internal server error
-
-    get:
-      tags:
-        - Carts
-      summary: Retrieve the cart
-      description: Fetches the contents of the specified cart.
-      parameters:
-        - name: cartId
-          in: path
-          required: true
-          description: Unique identifier for the cart
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Cart retrieved successfully
           content:
             application/json:
               schema:
@@ -73,24 +53,88 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Cart Found"
-                  cart:
-                    $ref: '#/components/schemas/Cart'
-        '404':
-          description: Cart not found
+                    example: "Cart not found or Product not found"
+        '400':
+          description: Bad request - validation or stock issues
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Size not found for this product"  # Example for size error
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
 
-    patch:
+    get:
       tags:
         - Carts
-      summary: Update product quantity in the cart
-      description: Updates the quantity of a specified product in the cart.
+      summary: Get cart details
+      description: Retrieves the details of a cart by its ID.
       parameters:
         - name: cartId
           in: path
           required: true
-          description: Unique identifier for the cart
+          description: The ID of the cart to retrieve
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cart found successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    description: Cart details
+        "404":
+          description: Cart not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+    patch:
+      tags:
+        - Carts
+      summary: Update product quantity in cart
+      description: Updates the quantity of a specific product in the cart.
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: The ID of the cart to update
           schema:
             type: string
       requestBody:
@@ -102,46 +146,75 @@ paths:
               properties:
                 productCode:
                   type: string
-                  example: "P12345"
+                  description: The code of the product to update
                 size:
                   type: string
-                  example: "M"
+                  description: The size of the product
                 color:
                   type: string
-                  example: "Red"
+                  description: The color of the product
                 newQuantity:
-                  type: number
-                  example: 3
+                  type: integer
+                  description: The new quantity for the product
       responses:
-        '200':
+        "200":
           description: Product quantity updated successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  success:
+                    type: boolean
                   message:
                     type: string
-                    example: "Product quantity updated successfully"
-                  cart:
-                    $ref: '#/components/schemas/Cart'
-        '404':
-          description: Product not found in cart or cart not found
-        '400':
-          description: Invalid quantity or not enough stock available
-        '500':
+                  data:
+                    type: object
+                    description: Updated cart details
+        "400":
+          description: Invalid request or insufficient stock
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "404":
+          description: Cart or product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "500":
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
 
     delete:
       tags:
         - Carts
       summary: Remove a product from the cart
-      description: Removes a specified product from the cart.
+      description: Deletes a specific product from the cart and updates the stock.
       parameters:
         - name: cartId
           in: path
           required: true
-          description: Unique identifier for the cart
+          description: The ID of the cart to update
           schema:
             type: string
       requestBody:
@@ -153,30 +226,62 @@ paths:
               properties:
                 productCode:
                   type: string
-                  example: "P12345"
+                  description: The code of the product to remove
                 size:
                   type: string
-                  example: "M"
+                  description: The size of the product
                 color:
                   type: string
-                  example: "Red"
+                  description: The color of the product
       responses:
-        '200':
-          description: Product removed from the cart and stock updated
+        "200":
+          description: Product removed from cart and stock updated
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  success:
+                    type: boolean
                   message:
                     type: string
-                    example: "Product removed from cart and stock updated"
-                  cart:
-                    $ref: '#/components/schemas/Cart'
-        '404':
-          description: Product not found in cart or cart not found
-        '500':
+                  data:
+                    type: object
+                    description: Updated cart details
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "404":
+          description: Cart or product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        "500":
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
 
 components:
   schemas:
@@ -192,20 +297,8 @@ components:
             type: object
             properties:
               product:
-                type: object
-                properties:
-                  _id:
-                    type: string
-                    example: "60d4e73fbc3c6c001f0e9b0d"
-                  code:
-                    type: string
-                    example: "P12345"
-                  name:
-                    type: string
-                    example: "Product Name"
-                  price:
-                    type: number
-                    example: 20.99
+                type: string
+                example: "60d4e73fbc3c6c001f0e9b0d"
               size:
                 type: string
                 example: "M"
@@ -218,3 +311,6 @@ components:
         totalPrice:
           type: number
           example: 41.98
+        deleted:
+          type: boolean
+          example: false

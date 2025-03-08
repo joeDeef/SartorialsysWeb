@@ -1,5 +1,10 @@
 import Cart from "../models/Cart.js";
 import Order from "../models/Order.js";
+import {
+  CartNotFoundError,
+  SizeNotFoundError,
+  ColorNotFoundError,
+} from "../errors/cartErrors.js";
 
 /**
  * Creates a new order from a cart and clears the cart after saving the order.
@@ -10,7 +15,7 @@ import Order from "../models/Order.js";
  */
 export const saveOrder = async (cartId, shippingInfo, paymentInfo) => {
   const cart = await Cart.findById(cartId).populate("items.product");
-  if (!cart) throw new Error("Cart not found");
+  if (!cart) throw new CartNotFoundError(cartId);
 
   const orderItems = [];
   let subtotal = 0;
@@ -20,16 +25,10 @@ export const saveOrder = async (cartId, shippingInfo, paymentInfo) => {
     if (!product) continue;
 
     const sizeData = product.inventory.find((s) => s.size === item.size);
-    if (!sizeData)
-      throw new Error(
-        `Size ${item.size} not found for product ${product.name}`
-      );
+    if (!sizeData) throw new SizeNotFoundError(item.size);
 
     const colorData = sizeData.colors.find((c) => c.name === item.color);
-    if (!colorData)
-      throw new Error(
-        `Color ${item.color} not found for product ${product.name}`
-      );
+    if (!colorData) throw new ColorNotFoundError(item.color);
 
     const totalPrice = item.quantity * product.price;
     orderItems.push({

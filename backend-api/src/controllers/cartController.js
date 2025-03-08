@@ -1,3 +1,12 @@
+import {
+  CartNotFoundError,
+  ColorNotFoundError,
+  InsufficientStockError,
+  InvalidQuantityError,
+  ProductNotFoundError,
+  ProductNotInCartError,
+  SizeNotFoundError,
+} from "../errors/cartErrors.js";
 import * as cartService from "../services/cartService.js";
 import {
   logsError,
@@ -22,6 +31,18 @@ export const addProductToCart = async (req, res) => {
       updatedCart
     );
   } catch (error) {
+    const handledErrors = [
+      CartNotFoundError,
+      ProductNotFoundError,
+      SizeNotFoundError,
+      ColorNotFoundError,
+      InsufficientStockError,
+    ];
+
+    if (handledErrors.some((err) => error instanceof err)) {
+      return sendErrorResponse(res, error.message, error.statusCode);
+    }
+
     logsError(error);
     sendErrorResponse(res);
   }
@@ -30,10 +51,10 @@ export const addProductToCart = async (req, res) => {
 export const getCart = async (req, res) => {
   try {
     const cart = await cartService.getCart(req.params.cartId);
-
-    if (!cart) return sendErrorResponse(res, "Cart not found", 404);
     sendSuccessResponse(res, "Cart found", cart);
   } catch (error) {
+    if (error instanceof CartNotFoundError)
+      return sendErrorResponse(res, error.message, error.statusCode);
     logsError(error);
     sendErrorResponse(res);
   }
@@ -56,6 +77,18 @@ export const updateProductQuantity = async (req, res) => {
       updatedCart
     );
   } catch (error) {
+    const handledErrors = [
+      CartNotFoundError,
+      ProductNotInCartError,
+      InvalidQuantityError,
+      SizeNotFoundError,
+      ColorNotFoundError,
+      InsufficientStockError,
+    ];
+
+    if (handledErrors.some((err) => error instanceof err)) {
+      return sendErrorResponse(res, error.message, error.statusCode);
+    }
     logsError(error);
     sendErrorResponse(res);
   }
@@ -76,6 +109,16 @@ export const deleteProductFromCart = async (req, res) => {
       updatedCart
     );
   } catch (error) {
+    const handledErrors = [
+      CartNotFoundError,
+      ProductNotInCartError,
+      SizeNotFoundError,
+      ColorNotFoundError,
+    ];
+
+    if (handledErrors.some((err) => error instanceof err)) {
+      return sendErrorResponse(res, error.message, error.statusCode);
+    }
     logsError(error);
     sendErrorResponse(res);
   }

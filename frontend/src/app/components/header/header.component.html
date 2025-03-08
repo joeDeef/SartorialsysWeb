@@ -8,13 +8,9 @@
       <li><a [routerLink]="['/home']">Inicio</a></li>
       <li><a [routerLink]="['/products/Camisa']">Camisas</a></li>
       <li><a [routerLink]="['/products/Terno']">Ternos</a></li>
+      <li><a [routerLink]="['/products/Chaqueta']">Chaquetas</a></li>
       <li><a [routerLink]="['/products/Pantalón']">Pantalones</a></li>
       <li><a [routerLink]="['/products/Accesorio']">Accesorios</a></li>
-
-      <!-- Solo se muestra si el usuario es Admin -->
-      <li *ngIf="isAdmin">
-        <a [routerLink]="['/administration']">Administración</a>
-      </li>
 
       <!-- Si no está autenticado, se muestra "Iniciar Sesión" -->
       <li *ngIf="!isAuthenticated">
@@ -36,6 +32,10 @@
           </li>
           <li (click)="logout()">
             <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </li>
+          <!-- Solo se muestra si el usuario es Admin -->
+          <li *ngIf="isAdmin" (click)="goToAdminDashboard()">
+            <i class="fa-solid fa-user-tie"></i> Panel de Administración
           </li>
         </ul>
       </li>

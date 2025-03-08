@@ -1,5 +1,12 @@
 import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
+import {
+  CartNotFoundError,
+  ColorNotFoundError,
+  InsufficientStockError,
+  ProductNotFoundError,
+  SizeNotFoundError,
+} from "../errors/cartErrors.js";
 
 /**
  * Adds a product to the cart and updates inventory.
@@ -18,19 +25,19 @@ export const addProductToCart = async (
   quantity
 ) => {
   const cart = await Cart.findById(cartId);
-  if (!cart) throw new Error("Cart not found");
+  if (!cart) throw new CartNotFoundError(cartId);
 
   const product = await Product.findOne({ code: productCode });
-  if (!product) throw new Error("Product not found");
+  if (!product) throw new ProductNotFoundError(productCode);
 
   const sizeData = product.inventory.find((s) => s.size === size);
-  if (!sizeData) throw new Error("Size not found for this product");
+  if (!sizeData) throw new SizeNotFoundError(size);
 
   const colorData = sizeData.colors.find((c) => c.name === color);
-  if (!colorData) throw new Error("Color not found for this product size");
+  if (!colorData) throw new ColorNotFoundError(color);
 
   if (colorData.amount < quantity)
-    throw new Error("Not enough stock available");
+    throw new InsufficientStockError(color, size, colorData.amount);
 
   const existingItem = cart.items.find(
     (item) =>
@@ -66,7 +73,7 @@ export const addProductToCart = async (
  */
 export const getCart = async (cartId) => {
   const cart = await Cart.findById(cartId).populate("items.product").exec();
-  if (!cart) throw new Error("Cart not found");
+  if (!cart) throw new CartNotFoundError(cartId)
   return cart;
 };
 
@@ -87,7 +94,7 @@ export const updateProductQuantity = async (
   newQuantity
 ) => {
   const cart = await Cart.findById(cartId).populate("items.product").exec();
-  if (!cart) throw new Error("Cart not found");
+  if (!cart) throw new CartNotFoundError(cartId);
 
   const cartItem = cart.items.find(
     (item) =>
@@ -95,25 +102,23 @@ export const updateProductQuantity = async (
       item.size === size &&
       item.color === color
   );
-  if (!cartItem)
-    throw new Error("Product with given size and color not found in cart");
+  if (!cartItem) throw new ProductNotInCartError(productCode, size, color);
 
-  if (newQuantity < 1)
-    throw new Error("Quantity must be greater than or equal to 1");
+  if (newQuantity < 1) throw new InvalidQuantityError(newQuantity);
 
   const product = cartItem.product;
   const sizeData = product.inventory.find((s) => s.size === size);
-  if (!sizeData) throw new Error("Size not found in product inventory");
+  if (!sizeData) throw new SizeNotFoundError(size);
 
   const colorData = sizeData.colors.find((c) => c.name === color);
-  if (!colorData) throw new Error("Color not found in product inventory");
+  if (!colorData) throw new ColorNotFoundError(color);
 
   const currentQuantity = cartItem.quantity;
 
   if (newQuantity > currentQuantity) {
     const quantityToDecrease = newQuantity - currentQuantity;
     if (colorData.amount < quantityToDecrease)
-      throw new Error("Not enough stock available");
+      throw new InsufficientStockError(color, size, colorData.amount);
     colorData.amount -= quantityToDecrease;
   } else {
     const quantityToIncrease = currentQuantity - newQuantity;
@@ -147,7 +152,7 @@ export const deleteProductFromCart = async (
   color
 ) => {
   const cart = await Cart.findById(cartId).populate("items.product").exec();
-  if (!cart) throw new Error("Cart not found");
+  if (!cart) throw new CartNotFoundError(cartId);
 
   const productIndex = cart.items.findIndex(
     (item) =>
@@ -156,17 +161,17 @@ export const deleteProductFromCart = async (
       item.color === color
   );
   if (productIndex === -1)
-    throw new Error("Product with given size and color not found in cart");
+    throw new ProductNotInCartError(productCode, size, color);
 
   const cartItem = cart.items[productIndex];
   const product = cartItem.product;
   const quantityToReturn = cartItem.quantity;
 
   const sizeData = product.inventory.find((s) => s.size === size);
-  if (!sizeData) throw new Error("Size not found in product inventory");
+  if (!sizeData) throw new SizeNotFoundError(size);
 
   const colorData = sizeData.colors.find((c) => c.name === color);
-  if (!colorData) throw new Error("Color not found in product inventory");
+  if (!colorData) throw new ColorNotFoundError(color);
 
   colorData.amount += quantityToReturn;
   colorData.available = colorData.amount > 0;

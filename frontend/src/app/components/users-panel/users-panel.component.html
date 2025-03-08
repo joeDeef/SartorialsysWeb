@@ -1,0 +1,48 @@
+<div class="header">
+  <!-- Contenedor con etiqueta y input -->
+  <div class="search-container">
+    <label for="search-input" *ngIf="searchText" class="search-label">Buscar usuario:</label>
+    <input id="search-input" type="text" placeholder="Buscar usuario..." [(ngModel)]="searchText"
+      (ngModelChange)="onSearchChange(searchText)" class="search-input" />
+  </div>
+
+  <!-- Botón para añadir usuario -->
+  <button class="add-user-btn" [routerLink]="['/admin-panel/add-user']">
+    Añadir Usuario
+  </button>
+</div>
+
+<!-- Tabla de usuarios -->
+<div class="user-table-container">
+  <table class="user-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Rol</th>
+        <th>Email</th>
+        <th>Cart ID</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of filteredUsers(); let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ user._id }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.last_name }}</td>
+        <td>{{ user.role }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.cart }}</td>
+        <td>
+          <a [routerLink]="['/admin-panel/user-manage', user._id]"
+            [queryParams]="{ name: user.name, last_name: user.last_name, email: user.email, role: user.role}">
+            Ver
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

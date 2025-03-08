@@ -1,0 +1,52 @@
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+</head>
+
+<div class="cart-container" *ngIf="isAuthenticated; else notLoggedIn">
+    <button class="close-btn" (click)="cerrarCarrito()"><i class="ti ti-square-rounded-x"></i></button>
+    <h2>Carrito ({{ cart.items.length }} items)</h2>
+
+    <div class="cart-items" *ngIf="cart.items.length > 0; else emptyCart">
+        <div class="cart-item" *ngFor="let item of cart.items">
+            <img [src]="item.product.images[0]" *ngIf="item.product.images[0]" alt="{{ item.product.name }}">
+            <div class="item-details">
+                <h2>{{ item.product.name }}</h2>
+                <p>{{ item.product.price | currency }}</p>
+                <p>Color: {{ item.color }}</p>
+                <p>Talla: {{ item.size }}</p>
+                <div class="actions">
+                    <div class="quantity-selector">
+                        <button (click)="updateQuantityCart(item, item.quantity - 1)">−</button>
+                        <input type="number" [(ngModel)]="item.quantity"
+                            (ngModelChange)="updateQuantityCart(item, item.quantity)" min="1" />
+                        <button (click)="updateQuantityCart(item, item.quantity + 1)">+</button>
+                    </div>                    
+                    <button (click)="removeFromCart(item)"><i class="ti ti-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="total-container">
+        <p class="subtotal">
+            <span>Subtotal:</span>
+            <span>{{ cart.totalPrice | currency }}</span>
+        </p>
+        <p class="nota">Los impuestos y costos de envío se calculan en la página de pago</p>
+        <button class="checkout-btn" (click)="goToCheckout()">Página de pago</button>
+        <button class="cartview-btn" (click)="goToMainCart()">Ver Carrito</button>
+        <p><i class="ti ti-lock"></i> Pago seguro</p>
+    </div>
+</div>
+
+<ng-template #notLoggedIn>
+    <div class="cart-container">
+        <button class="close-btn" (click)="cerrarCarrito()"><i class="ti ti-square-rounded-x"></i></button>
+        <h2>Carrito</h2>
+        <p class="sesion-note">Debes iniciar sesión para ver tu carrito.</p>
+        <button class="login-btn" (click)="goToLogin()">Iniciar sesión</button>
+    </div>
+</ng-template>
+
+<ng-template #emptyCart>
+    <p>El carrito está vacío</p>
+</ng-template>

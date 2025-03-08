@@ -1,8 +1,10 @@
-import { Product } from './product.model';
+import { IProduct } from './product.model';
 
 export interface CartItem {
-  product: Product; // Usando el modelo Product existente
+  product: IProduct; // Usando el modelo Product existente
   quantity: number;
+  color: string,
+  size: string
 }
 
 export interface Cart {

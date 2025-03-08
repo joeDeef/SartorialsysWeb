@@ -11,6 +11,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
+            example:
+              name: "John"
+              last_name: "Doe"
+              email: "john.doe@example.com"
+              password: "securepassword123"
       responses:
         '201':
           description: User created successfully
@@ -189,7 +194,12 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              allOf:
+                - $ref: '#/components/schemas/User'
+              description: "Fields to update. Send only the fields that need to be changed."
+              example:
+                name: "Updated Name"
+                email: "new.email@example.com"
       responses:
         '200':
           description: User updated successfully
@@ -295,3 +305,10 @@ components:
           enum:
             - admin
             - user
+        active:
+          type: boolean
+          description: Whether the user is active or not
+          default: true
+        cart:
+          type: string
+          description: Reference to the user's shopping cart

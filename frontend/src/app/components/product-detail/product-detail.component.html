@@ -1,26 +1,40 @@
-<ng-container *ngIf="!loading">
+<ng-container *ngIf="!loading && product.name">
   <div class="product-detail">
-    <!-- Imagen del producto -->
-    <div class="product-image">
-      <img
-        src="{{ url + '/uploads/' + urlImages }}"
-        alt="Camisa Pical Rosado"
-      />
+    <div class="product-images">
+      <div class="carousel">
+        <!-- Carrusel -->
+        <div class="carousel-inner" [ngClass]="{ 'is-active': currentIndex === i }"
+          *ngFor="let image of product.images; let i = index">
+          <img [src]="image" alt="{{ product.name }}" class="carousel-image" />
+        </div>
+        <!-- Botones de navegación -->
+        <button class="carousel-control prev" (click)="prevImage()">&#10094;</button>
+        <button class="carousel-control next" (click)="nextImage()">&#10095;</button>
+      </div>
     </div>
 
-    <!-- Información del producto -->
     <div class="product-info">
       <h1>{{ product.name }}</h1>
       <p>{{ product.price | currency }}</p>
 
       <!-- Selección de talla -->
-      <select>
+      <select [(ngModel)]="selectedSize" (change)="onSizeChange()">
         <option value="">Elegir</option>
-        <option value="S">S</option>
-        <option value="M">M</option>
-        <option value="L">L</option>
-        <option value="XL">XL</option>
+        <option *ngFor="let inventory of product.inventory" [value]="inventory.size">
+          {{ inventory.size }}
+        </option>
       </select>
+
+      <!-- Selección de color -->
+      <div *ngIf="selectedSize" class="color-options">
+        <label for="color">Selecciona un color:</label>
+        <select [(ngModel)]="selectedColor">
+          <option value="">Elegir</option> <!-- Opción vacía por defecto -->
+          <option *ngFor="let color of getAvailableColorsForSize(selectedSize)" [value]="color.name">
+            {{ color.name }}
+          </option>
+        </select>
+      </div>
 
       <!-- Cantidad -->
       <div class="quantity">
@@ -29,19 +43,24 @@
         <button (click)="incrementar()">+</button>
       </div>
 
-      <!-- Botones de acción -->
       <div class="actions">
         <button class="add-to-cart" (click)="addToCart()">Agregar al carrito</button>
-        <button class="buy-now">Realizar compra</button>
+        <button class="buy-now" (click)="completePurchase()">Realizar compra</button>
       </div>
-      <!-- Botones adicionales -->
+
       <div class="extra-actions">
-        <button class="delete" (click)="eliminarProducto(product.code)" *ngIf="isAdminRoute">Eliminar</button>
-        <button class="update" [routerLink]="['/administration/products/edit-product',product.code]"  *ngIf="isAdminRoute">
-          Actualizar
-        </button>
+        <button class="delete" (click)="eliminarProducto(product.code)" *ngIf="isAdmin()">Eliminar</button>
+        <button class="update" [routerLink]="['/admin-panel/products/edit-product',product.code]"
+          *ngIf="isAdmin()">Actualizar</button>
       </div>
     </div>
   </div>
 </ng-container>
-<ng-container *ngIf="loading"><i>loading information </i></ng-container>
+
+<ng-container *ngIf="loading">
+  <i>Loading information...</i>
+</ng-container>
+
+<ng-container *ngIf="!loading && !product.name">
+  <i>No product data available.</i>
+</ng-container>

@@ -1,0 +1,116 @@
+<ng-container *ngIf="!loading">
+  <div class="form-container">
+    <h2>Editar Producto</h2>
+
+    <form #productForm="ngForm" class="form">
+      <!-- Código -->
+      <div class="form-group">
+        <label for="codigo">Código:</label>
+        <input type="text" id="codigo" [(ngModel)]="product.code" name="codigo" #codigo="ngModel" required
+          class="form-input" disabled />
+        <div class="error" *ngIf="codigo.invalid && codigo.touched">
+          <span *ngIf="codigo.errors?.['required']" class="error-message">El código es obligatorio.</span>
+        </div>
+      </div>
+
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" [(ngModel)]="product.name" name="name" #name="ngModel" required
+          placeholder="Escribe el nombre del producto" class="form-input" disabled />
+        <div class="error" *ngIf="name.invalid && name.touched">
+          <span *ngIf="name.errors?.['required']" class="error-message">El nombre es obligatorio.</span>
+        </div>
+      </div>
+
+      <!-- Precio -->
+      <div class="form-group">
+        <label for="price">Precio:</label>
+        <input type="number" id="price" [(ngModel)]="product.price" name="price" #price="ngModel" required min="0"
+          placeholder="Introduce el precio" class="form-input" />
+        <button type="button" (click)="updatePrice()" class="action-btn add-btn">
+          <i class="fas fa-save"></i>
+        </button>
+      </div>
+
+      <!-- Categoría -->
+      <div class="form-group">
+        <label for="category">Categoría</label>
+        <select id="category" name="category" [(ngModel)]="product.category" required class="form-input" disabled>
+          <option value="Shirt">Camisa</option>
+          <option value="Accessory">Accesorio</option>
+          <option value="Suit">Terno</option>
+          <option value="Jacket">Chaqueta</option>
+          <option value="Pants">Pantalón</option>
+        </select>
+      </div>
+
+      <!-- Tabla de Inventario -->
+      <div class="form-group">
+        <label>Inventario</label>
+        <button (click)="addSize(product.inventory)" class="action-btn add-btn">
+          <i class="fas fa-plus"> Añadir Talla</i>
+        </button>
+        <table class="inventory-table">
+          <thead>
+            <tr>
+              <th *ngIf="!isAccessory">Talla</th>
+              <th>Colores</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let size of product.inventory; let i = index">
+              <td *ngIf="!isAccessory">
+                <select [(ngModel)]="size.size" name="size-{{ i }}" class="form-input" disabled>
+                  <option value="" disabled selected>Selecciona una talla</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                </select>
+              </td>
+              <td>
+                <div *ngFor="let color of size.colors; let j = index" class="color-row">
+                  <select [(ngModel)]="color.name" name="color-{{ i }}-{{ j }}" class="form-input" disabled>
+                    <option *ngFor="let c of availableColors" [value]="c">{{ c }}</option>
+                  </select>
+                  <input type="number" [(ngModel)]="color.amount" name="amount-{{ i }}-{{ j }}" min="0"
+                    class="form-input small-input" />
+                  <button type="button" (click)="removeColorInvetory(i, j)" class="action-btn">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+              <td>
+                <button (click)="saveInventory()" class="action-btn add-btn">
+                  <i class="fas fa-save"> Guardar</i>
+                </button>
+                <button (click)="removeSizeInvetory(i)" class="action-btn">
+                  <i class="fas fa-trash"> Eliminar</i>
+                </button>
+                <button (click)="addColor(size)" class="action-btn add-btn">
+                  <i class="fas fa-plus"> Añadir Color</i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <app-product-images 
+      [currentImages]="product.images"
+      [productCode]="product.code">
+    </app-product-images>
+    </form>
+  </div>
+
+</ng-container>
+
+<ng-container *ngIf="loading">
+  <p>Cargando producto...</p>
+</ng-container>
+
+<app-add-size-product-modal *ngIf="currentInvetory" [product]="product"
+  (close)="closeModalSize()"></app-add-size-product-modal>
+<app-add-color-product-modal *ngIf="currentSize" [code]="product.code" [selectedSize]="currentSize"
+  (close)="closeModalColor()"></app-add-color-product-modal>

@@ -124,3 +124,72 @@
 button:hover {
   opacity: 0.9; /* Ligero efecto al pasar el mouse */
 }
+
+.product-detail {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 40px;
+  background-color: #fff;
+}
+
+.product-images {
+  max-width: 600px;
+  position: relative;
+}
+
+.carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-inner {
+  display: none;
+  width: 100%;
+  max-width: 100%;
+}
+
+.carousel-inner.is-active {
+  display: block;
+}
+
+.carousel-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 30px;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+.carousel-control.prev {
+  left: 10px;
+}
+
+.carousel-control.next {
+  right: 10px;
+}
+
+.product-info {
+  max-width: 400px;
+  padding: 20px;
+}
+
+/* El resto de tus estilos existentes */

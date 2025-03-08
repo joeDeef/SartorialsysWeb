@@ -1,57 +1,57 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
-import { ProductsComponent } from './components/products/products.component';
-import { ProductDetailComponent } from './components/product-detail/product-detail.component';
-import { CreateProductComponent } from './components/create-product/create-product.component';
 import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
-import { AdministationComponent } from './components/administation/administation.component';
-import { EditProductComponent } from './components/edit-product/edit-product.component';
-import { UsersComponent } from './components/users/users.component';
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { UsersPanelComponent } from './components/users-panel/users-panel.component';
+import { UserManageComponent } from './components/user-manage/user-manage.component';
 import { AddUserComponent } from './components/add-user/add-user.component';
-import { ManageUserComponent } from './components/manage-user/manage-user.component';
-import { CarritoComponent } from './components/aside-cart/carrito.component';
-import { MainCartComponent } from './components/main-cart/main-cart.component';
+import { ProductsComponent } from './components/products/products.component';
+import { AddProductComponent } from './components/add-product/add-product.component';
+import { ProductDetailComponent } from './components/product-detail/product-detail.component';
+import { ProductEditComponent } from './components/product-edit/product-edit.component';
+import { CartModalComponent } from './components/cart-modal/cart-modal.component';
 import { CheckoutComponent } from './components/checkout/checkout.component';
-import { AccountComponent } from './components/account/account.component';
+import { CartMainComponent } from './components/cart-main/cart-main.component';
 
 const routes: Routes = [
-  // Default route
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-
-  // General routes
   { path: 'home', component: HomeComponent },
-  { path: 'users', component: HomeComponent },
-  { path: 'users/:id', component: HomeComponent },
-  { path: 'products/:category/:id', component: ProductDetailComponent },
-  { path: 'products/:category', component: ProductsComponent },
-  { path: 'products', component: ProductsComponent },
-  { path: 'cart', component: CarritoComponent, outlet: 'modal' },
-  { path: 'main-cart', component: MainCartComponent },
-  { path: 'checkout', component: CheckoutComponent},
+  { path: 'profile', component: ProfileComponent },
 
-  // Authentication routes
+  //Autenticación
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
-  { path: 'account', component: AccountComponent },
+  
+  //Administración
+  { path: 'admin-panel', component: AdminPanelComponent },
+    //Usuarios
+  { path: 'admin-panel/users', component: UsersPanelComponent },
+  { path: 'admin-panel/user-manage/:id', component: UserManageComponent },
+  { path: 'admin-panel/add-user', component: AddUserComponent },
+    //Productos
+  { path: 'admin-panel/products', component: ProductsComponent },
+  { path: 'admin-panel/products/add-product', component: AddProductComponent },
+  { path: 'admin-panel/products/edit-product/:id', component: ProductEditComponent },
+  { path: 'admin-panel/products/:id', component: ProductDetailComponent },
 
-  // Product administration routes
-  { path: 'administration', component: AdministationComponent },
-  { path: 'administration/products', component: ProductsComponent },
-  { path: 'administration/users', component: UsersComponent },
-  { path: 'administration/add-user', component: AddUserComponent },
-  { path: 'administration/manage-user/:id', component: ManageUserComponent },
-  { path: 'administration/products/edit-product/:id', component: EditProductComponent },
-  { path: 'administration/products/create-product', component: CreateProductComponent },
-  { path: 'administration/products/:id', component: ProductDetailComponent },
+  //Productos
+  { path: 'products/:category', component: ProductsComponent },
+  { path: 'products', component: ProductsComponent },
+  { path: 'products/:category/:id', component: ProductDetailComponent },
 
-  // Catch-all route (same as default)
+  //Carrito
+  { path: 'cart', component: CartModalComponent, outlet: 'modal' },
+  { path: 'checkout', component: CheckoutComponent},
+  { path: 'cart-main', component: CartMainComponent},
+
   { path: '**', redirectTo: 'home' }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class AppRoutingModule { }

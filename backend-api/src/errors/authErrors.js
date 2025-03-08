@@ -8,7 +8,7 @@ class AuthError extends Error {
 
 class WrongEmailError extends AuthError {
   constructor() {
-    super("Incorrect Email/Unregistered User", 400);
+    super("Incorrect Email/Unregistered User", 404);
   }
 }
 
