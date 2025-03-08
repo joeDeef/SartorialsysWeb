@@ -10,37 +10,21 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - name
-                - price
-                - category
-                - size
-                - amount
-                - color
-              properties:
-                code:
-                  type: string
-                name:
-                  type: string
-                price:
-                  type: number
-                  format: float
-                category:
-                  type: string
-                  enum: ['Camisa', 'Accesorio', 'Terno', 'Chaqueta', 'Pantalón']
-                size:
-                  type: string
-                  enum: ['S', 'M', 'L', 'XL']
-                amount:
-                  type: integer
-                  minimum: 0
-                color:
-                  type: string
-                status:
-                  type: boolean
-                  enum: [true, false]
-                  default: true
+              $ref: '#/components/schemas/Product'
+            example:
+              code: "PROD123"
+              name: "Casual Shirt"
+              category: "Shirt"
+              price: 49.99
+              inventory:
+                - size: "M"
+                  colors:
+                    - name: "Red"
+                      amount: 20
+                - size: "L"
+                  colors:
+                    - name: "Blue"
+                      amount: 15
       responses:
         '201':
           description: Product created successfully
@@ -52,7 +36,7 @@ paths:
                   message:
                     type: string
                     example: "Product created successfully"
-                  product:
+                  data:
                     $ref: '#/components/schemas/Product'
         '409':
           description: Existing code
@@ -63,7 +47,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "This code already exists: {code}"
+                    example: "This code already exists: PPA1263"
         '500':
           description: Internal server error
           content:
@@ -79,6 +63,12 @@ paths:
         - Products
       summary: Retrieve all products
       description: Fetches a list of all products.
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Filter products by category
       responses:
         '200':
           description: Products retrieved successfully
@@ -90,7 +80,7 @@ paths:
                   message:
                     type: string
                     example: "Products retrieved successfully"
-                  products:
+                  data:
                     type: array
                     items:
                       $ref: '#/components/schemas/Product'
@@ -120,14 +110,15 @@ paths:
       tags:
         - Products
       summary: Upload images for a product
-      description: Uploads images for a specific product.
+      description: Uploads one or multiple images for a specific product using its unique code.
       parameters:
-        - in: path
-          name: code
+        - name: code
+          in: path
           required: true
-          description: Product Code
+          description: Unique product code
           schema:
             type: string
+          example: "PROD123"
       requestBody:
         required: true
         content:
@@ -135,11 +126,14 @@ paths:
             schema:
               type: object
               properties:
-                image:
+                images:
                   type: array
+                  description: "Array of image files to upload"
                   items:
                     type: string
                     format: binary
+              required:
+                - images
       responses:
         '200':
           description: Images uploaded successfully
@@ -150,8 +144,8 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Images uploaded successfully"
-                  product:
+                    example: "Images added"
+                  data:
                     $ref: '#/components/schemas/Product'
         '404':
           description: Product not found
@@ -162,7 +156,191 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "The product does not exist and images cannot be uploaded"
+                    example: "Product not Found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+
+  /products/{code}/add-size:
+    post:
+      tags:
+        - Products
+      summary: Add a new size to a product
+      description: Adds a new size with its corresponding colors to a product's inventory.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Unique product code
+          schema:
+            type: string
+          example: "PROD123"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - size
+                - colors
+              properties:
+                size:
+                  type: string
+                  description: "Size to be added"
+                  enum: ["S", "M", "L", "XL"]
+                  example: "M"
+                colors:
+                  type: array
+                  description: "List of colors with stock amounts"
+                  items:
+                    type: object
+                    required:
+                      - name
+                      - amount
+                    properties:
+                      name:
+                        type: string
+                        description: "Color name"
+                        example: "Red"
+                      amount:
+                        type: number
+                        description: "Stock amount (must be >= 0)"
+                        minimum: 0
+                        example: 20
+      responses:
+        '200':
+          description: Size added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Size added to inventory"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product not found"
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid size or color data"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+
+  /products/{code}/{size}/add-color:
+    post:
+      tags:
+        - Products
+      summary: Add colors to a specific size of a product
+      description: Adds one or multiple colors with stock to a specific size in a product's inventory.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Unique product code
+          schema:
+            type: string
+          example: "PROD123"
+        - name: size
+          in: path
+          required: true
+          description: The size to which the colors will be added
+          schema:
+            type: string
+            enum: ["S", "M", "L", "XL"]
+          example: "M"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - colors
+              properties:
+                colors:
+                  type: array
+                  description: "List of colors with stock amounts"
+                  items:
+                    type: object
+                    required:
+                      - name
+                      - amount
+                    properties:
+                      name:
+                        type: string
+                        description: "Color name"
+                        example: "Blue"
+                      amount:
+                        type: number
+                        description: "Stock amount (must be >= 0)"
+                        minimum: 0
+                        example: 15
+      responses:
+        '200':
+          description: Colors added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Colors added to the size"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product or size not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product or size not found"
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid color data"
         '500':
           description: Internal server error
           content:
@@ -195,7 +373,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  product:
+                  message:
+                    type: string
+                    example: Product retrieved successfully
+                  data:
                     $ref: '#/components/schemas/Product'
         '404':
           description: Product not found
@@ -220,37 +401,36 @@ paths:
     put:
       tags:
         - Products
-      summary: Update an existing product
-      description: Updates an existing product using its code.
+      summary: Update a product
+      description: Updates the details of an existing product.
       parameters:
-        - in: path
-          name: code
+        - name: code
+          in: path
           required: true
-          description: Product Code
+          description: Unique product code
           schema:
             type: string
+          example: "PROD123"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                price:
-                  type: number
-                  format: float
-                category:
-                  type: string
-                size:
-                  type: string
-                amount:
-                  type: integer
-                color:
-                  type: string
-                status:
-                  type: boolean
+              $ref: '#/components/schemas/Product'
+            example:
+              name: "Updated Shirt"
+              category: "Shirt"
+              price: 39.99
+              inventory:
+                - size: "M"
+                  colors:
+                    - name: "Red"
+                      amount: 10
+                - size: "L"
+                  colors:
+                    - name: "Blue"
+                      amount: 5
+              available: true
       responses:
         '200':
           description: Product updated successfully
@@ -262,7 +442,7 @@ paths:
                   message:
                     type: string
                     example: "Product updated successfully"
-                  product:
+                  data:
                     $ref: '#/components/schemas/Product'
         '404':
           description: Product not found
@@ -274,6 +454,125 @@ paths:
                   message:
                     type: string
                     example: "Product not found"
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid product data"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+    patch:
+      tags:
+        - Products
+      summary: Partially update a product
+      description: Updates specific fields of an existing product.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Unique product code
+          schema:
+            type: string
+          example: "PROD123"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Updated product name
+                category:
+                  type: string
+                  enum: ["Shirt", "Accessory", "Suit", "Jacket", "Pants"]
+                  description: Updated product category
+                price:
+                  type: number
+                  format: float
+                  description: Updated product price
+                available:
+                  type: boolean
+                  description: Product availability status
+                inventory:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      size:
+                        type: string
+                        enum: ["S", "M", "L", "XL"]
+                        description: Size to update
+                      colors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              description: Color name
+                            amount:
+                              type: number
+                              description: Updated stock amount
+                            available:
+                              type: boolean
+                              description: Color availability
+            example:
+              name: "New Shirt Name"
+              price: 55.99
+              inventory:
+                - size: "M"
+                  colors:
+                    - name: "Red"
+                      amount: 10
+                      available: true
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product not found"
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid product data"
         '500':
           description: Internal server error
           content:
@@ -288,14 +587,15 @@ paths:
       tags:
         - Products
       summary: Delete a product
-      description: Deletes a product using its code.
+      description: Deletes a product based on its unique code.
       parameters:
-        - in: path
-          name: code
+        - name: code
+          in: path
           required: true
-          description: Product Code
+          description: Unique product code
           schema:
             type: string
+          example: "PROD123"
       responses:
         '200':
           description: Product deleted successfully
@@ -327,19 +627,21 @@ paths:
                   message:
                     type: string
                     example: "Internal server error"
+
   /products/delete-image/{code}:
     delete:
       tags:
         - Products
       summary: Delete an image from a product
-      description: Removes an image associated with a product based on its code and image name.
+      description: Removes a specific image from a product based on its unique code.
       parameters:
-        - in: path
-          name: code
+        - name: code
+          in: path
           required: true
-          description: Product Code
+          description: Unique product code
           schema:
             type: string
+          example: "PROD123"
       requestBody:
         required: true
         content:
@@ -349,7 +651,8 @@ paths:
               properties:
                 imageName:
                   type: string
-                  description: The name of the image to delete
+                  description: Name of the image to delete
+                  example: "image1.jpg"
       responses:
         '200':
           description: Image deleted successfully
@@ -361,18 +664,8 @@ paths:
                   message:
                     type: string
                     example: "Image deleted successfully"
-                  product:
+                  data:
                     $ref: '#/components/schemas/Product'
-        '400':
-          description: Image not found in the product
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Image not found in product"
         '404':
           description: Product not found
           content:
@@ -393,35 +686,204 @@ paths:
                   message:
                     type: string
                     example: "Internal server error"
+
+  /products/{code}/{size}/remove:
+    delete:
+      tags:
+        - Products
+      summary: Remove a size from a product
+      description: Removes a specific size from the inventory of a product.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Unique product code
+          schema:
+            type: string
+          example: "PROD123"
+        - name: size
+          in: path
+          required: true
+          description: Size to be removed
+          schema:
+            type: string
+            enum: ["S", "M", "L", "XL"]
+          example: "M"
+      responses:
+        '200':
+          description: Size removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Size removed from the product"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product or size not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product or size not found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+
+  /products/{code}/{size}/{color}/remove:
+    delete:
+      tags:
+        - Products
+      summary: Remove a color from a product size
+      description: Removes a specific color from a given size in the product inventory.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Unique product code
+          schema:
+            type: string
+          example: "PROD123"
+        - name: size
+          in: path
+          required: true
+          description: Size from which the color will be removed
+          schema:
+            type: string
+            enum: ["S", "M", "L", "XL"]
+          example: "M"
+        - name: color
+          in: path
+          required: true
+          description: Color to be removed
+          schema:
+            type: string
+          example: "Red"
+      responses:
+        '200':
+          description: Color removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Color removed from the product"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          description: Product, size, or color not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product, size, or color not found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+
 components:
   schemas:
     Product:
       type: object
+      required:
+        - code
+        - name
+        - category
+        - price
+        - inventory
       properties:
-        id:
-          type: string
         code:
           type: string
+          description: "Unique product code"
+          example: "PROD123"
         name:
           type: string
-        price:
-          type: number
-          format: float
+          description: "Product name"
+          example: "Casual Shirt"
         category:
           type: string
-          enum: ['Camisa', 'Accesorio', 'Terno', 'Chaqueta', 'Pantalón']
-        size:
-          type: string
-          enum: ['S', 'M', 'L', 'XL']
-        amount:
-          type: integer
+          description: "Product category"
+          enum: ["Shirt", "Accessory", "Suit", "Jacket", "Pants"]
+          example: "Shirt"
+        price:
+          type: number
+          description: "Product price (must be >= 0)"
           minimum: 0
-        color:
-          type: string
-        status:
+          example: 49.99
+        inventory:
+          type: array
+          description: "List of available sizes and colors"
+          items:
+            type: object
+            properties:
+              size:
+                type: string
+                description: "Available sizes"
+                enum: ["S", "M", "L", "XL"]
+                example: "M"
+              colors:
+                type: array
+                description: "Available colors for this size"
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: "Color name"
+                      example: "Red"
+                    amount:
+                      type: number
+                      description: "Stock amount (must be >= 0)"
+                      minimum: 0
+                      example: 20
+                    available:
+                      type: boolean
+                      description: "Indicates if this color is available"
+                      default: true
+                      example: true
+              available:
+                type: boolean
+                description: "Indicates if this size is available"
+                default: true
+                example: true
+        available:
           type: boolean
-          enum: [true, false]
+          description: "Indicates if the product is available"
+          default: true
+          example: true
+        deleted:
+          type: boolean
+          description: "Indicates if the product is deleted"
+          default: false
+          example: false
         images:
           type: array
+          description: "List of image URLs"
           items:
             type: string
+          example: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]

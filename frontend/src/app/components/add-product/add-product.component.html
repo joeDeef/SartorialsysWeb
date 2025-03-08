@@ -1,0 +1,113 @@
+<div class="form-container">
+  <h2>{{ titulo }}</h2>
+
+  <!-- Mensajes de estado -->
+  <div class="message success" *ngIf="status == 'success'">
+    El Producto se ha guardado correctamente, puedes verlo
+    <a [routerLink]="['/products']" class="link">aquí</a>
+  </div>
+  <div class="message failed" *ngIf="status == 'failed'">
+    El producto no se ha podido guardar.
+  </div>
+
+  <form #productForm="ngForm" (ngSubmit)="newProduct(productForm)" class="form">
+    <!-- Código -->
+    <div class="form-group">
+      <label for="code">Código</label>
+      <input type="text" id="code" name="code" [(ngModel)]="product.code" required class="form-input" />
+    </div>
+
+    <!-- Nombre -->
+    <div class="form-group">
+      <label for="name">Nombre</label>
+      <input type="text" id="name" name="name" [(ngModel)]="product.name" required class="form-input" />
+    </div>
+
+    <!-- Precio -->
+    <div class="form-group">
+      <label for="price">Precio</label>
+      <input type="number" id="price" name="price" [(ngModel)]="product.price" required min="0" class="form-input" />
+    </div>
+
+    <!-- Categoría -->
+    <div class="form-group">
+      <label for="category">Categoría</label>
+      <select id="category" name="category" [(ngModel)]="product.category" required class="form-input">
+        <option value="Shirt">Camisa</option>
+        <option value="Accessory">Accesorio</option>
+        <option value="Suit">Terno</option>
+        <option value="Jacket">Chaqueta</option>
+        <option value="Pants">Pantalón</option>
+      </select>
+    </div>
+
+    <!-- Tabla de Inventario -->
+    <div class="form-group">
+      <label>Inventario</label>
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th *ngIf="!isAccessory">Talla</th>
+            <th>Colores</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let size of product.inventory; let i = index">
+            <td *ngIf="!isAccessory">
+              <select [(ngModel)]="size.size" name="size-{{ i }}" class="form-input">
+                <option value="" disabled selected>Selecciona una talla</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+              </select>
+            </td>
+            <td>
+              <div *ngFor="let color of size.colors; let j = index" class="color-row">
+                <select [(ngModel)]="color.name" name="color-{{ i }}-{{ j }}" class="form-input">
+                  <option *ngFor="let c of availableColors" [value]="c">{{ c }}</option>
+                </select>
+                <input type="number" [(ngModel)]="color.amount" name="amount-{{ i }}-{{ j }}" min="0"
+                  class="form-input small-input" />
+                <button type="button" (click)="addEmptyColorRow(i)" class="action-btn add-btn">
+                  ➕
+                </button>
+                <button type="button" (click)="removeColor(i, j)" class="action-btn">
+                  🗑
+                </button>
+              </div>
+            </td>
+            <td> <button type="button" (click)="addEmptySizeRow()" class="action-btn add-btn">
+                ➕
+              </button>
+              <button type="button" (click)="removeSize(i)" class="action-btn">
+                🗑
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Botón para agregar imágenes -->
+    <div class="form-group">
+      <label>Imágenes</label>
+      <button type="button" (click)="openFileInput()" class="form-button">Add Images</button>
+      <input type="file" #fileInput name="image" (change)="onImageChange($event)" multiple class="hidden-input" />
+
+      <!-- Vista previa de imágenes con botón de eliminar -->
+      <div class="image-preview">
+        <div *ngFor="let img of previewImages; let i = index" class="preview-img-container">
+          <img [src]="img" class="preview-img" />
+          <button type="button" class="delete-btn" (click)="removeImage(i)">🗑</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón de Guardar -->
+    <div class="form-group">
+      <input type="submit" value="Guardar" [disabled]="!productForm.form.valid" class="form-button" />
+    </div>
+  </form>
+</div>

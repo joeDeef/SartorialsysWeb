@@ -1,83 +1,64 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { IProduct, Product } from '../../models/product.model';
-import { ApiService } from '../../services/api.service';
-import { Global } from '../../services/global.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { IProduct } from '../../models/product.model';
+import { ProductService } from '../../services/product.service';
+import { Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
-  providers: [ApiService]
 })
-export class ProductsComponent implements OnInit {
-  currentCategory: string = ''; // Almacena la categoría actual
-  public url: string;
-  productsList: Product[] = [];
-  filteredProducts: Product[] = [];
-  isAll: boolean = true;
-  isAdminRoute: boolean = false;
-  priceFilter: number = 0; // Valor inicial del filtro de precio
-  priceCondition: string = 'greater'; // Condición por defecto: Mayor o igual
-  filteredProductsMenu: Product[] = [];
+export class ProductsComponent implements OnInit, OnDestroy {
+  currentCategory = '';
+  productsList: IProduct[] = [];
+  filteredProducts: IProduct[] = [];
+  priceFilter = 0;
+  priceCondition: 'greater' | 'less' = 'greater';
+  private unsubscribe$ = new Subject<void>();
 
-  constructor(private _apiService: ApiService, private route: ActivatedRoute, private _router: Router) {
-    this.url = Global.url;
-  }
+  private categoryMap: Record<string, string> = {
+    "Accesorio": "Accessory",
+    "Camisa": "Shirt",
+    "Pantalón": "Pants",
+    "Terno": "Suit",
+    "Chaqueta": "Jacket"
+  };
 
-  // Método para aplicar el filtro de precio
-  applyPriceFilter() {
-    // Aplica el filtro de precio según la condición seleccionada
-    if (this.priceCondition === 'greater') {
-      this.filteredProducts = this.productsList.filter(product => product.price >= this.priceFilter);
-    } else {
-      this.filteredProducts = this.productsList.filter(product => product.price <= this.priceFilter);
-    }
-
-    // Filtra por categoría después de filtrar por precio
-    if (!this.isAll) {
-      this.filteredProducts = this.filteredProducts.filter(
-        product => product.category === this.currentCategory
-      );
-    }
-  }
+  constructor(
+    private productService: ProductService,
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    // Verifica si la ruta actual contiene "administration"
-    this._router.events.subscribe(() => {
-      this.isAdminRoute = this._router.url.includes('administration');
-    });
-    
-    this.route.paramMap.subscribe(params => {
-      this.currentCategory = params.get('category') || '';
-      this.isAll = this.currentCategory === ''; // Si es la ruta de "todos los productos"
-      
-      // Obtén los productos desde el servicio
-      this._apiService.getProducts().subscribe((data: IProduct) => {
-        this.productsList = data.products;
-        this.applyPriceFilter(); // Aplica los filtros después de obtener los productos
-      });
+    this.route.paramMap.pipe(
+      takeUntil(this.unsubscribe$),
+      switchMap(params => {
+        this.currentCategory = params.get('category') || '';
+        const categoryInEnglish = this.categoryMap[this.currentCategory] || this.currentCategory;
+        return this.productService.getProducts(categoryInEnglish || undefined);
+      })
+    ).subscribe(response => {
+      this.productsList = response?.data || [];
+      this.applyFilters();
     });
   }
 
-  // Filtrar productos según la categoría actual
-  filterProducts(): void {
-    if (this.isAll) {
-      // Mostrar todos los productos
-      this.filteredProducts = this.productsList;
-    } else {
-      // Filtrar por categoría
-      this.filteredProducts = this.productsList.filter(
-        product => product.category === this.currentCategory
-      );
-    }
-
-    this.applyPriceFilter(); // Aplica también el filtro de precio
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
-  // Método para manejar el cambio en el precio (rango)
-  onPriceChange(newPrice: number) {
-    this.priceFilter = newPrice;
-    this.applyPriceFilter(); // Aplica el filtro de precio cada vez que cambia el rango
+  applyFilters(): void {
+    this.filteredProducts = this.productsList.filter(product => 
+      this.priceCondition === 'greater' ? product.price >= this.priceFilter : product.price <= this.priceFilter
+    );
+  }
+
+  isAdmin(): boolean {
+    return this.authService.getUser()?.role === "admin";
   }
 }

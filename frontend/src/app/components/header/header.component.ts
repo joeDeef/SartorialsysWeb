@@ -1,6 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -66,7 +66,7 @@ export class HeaderComponent {
     this.authService.logout();
     this.checkAuthentication();  // Actualizamos el estado después de hacer logout
 
-    this.router.navigate(['/home']); // Asegúrate de que '/perfil' es la ruta correcta
+    this.router.navigate(['/home']); // Asegúrate de que '/profile' es la ruta correcta
   }
 
   toggleMenu() {
@@ -75,6 +75,11 @@ export class HeaderComponent {
 
   goToProfile() {
     this.menuOpen = false; // Cierra el menú
-    this.router.navigate(['/account']); // Asegúrate de que '/perfil' es la ruta correcta
+    this.router.navigate(['/profile']); // Asegúrate de que '/profile' es la ruta correcta
+  }
+
+  goToAdminDashboard() {
+    this.menuOpen = false; // Cierra el menú
+    this.router.navigate(['/admin-panel'])
   }
 }

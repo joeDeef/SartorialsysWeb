@@ -1,17 +1,97 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { IColor, IInventory, IProduct } from '../models/product.model';
 import { Global } from './global.service';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = `${Global.url}/products`;
+  apiUrl: string;
+  constructor(private _httpClient: HttpClient) {
+    this.apiUrl = `${Global.url}/products`;
+  }
 
-  constructor(private http: HttpClient) {}
+  public getProducts(category?: string): Observable<{ data: IProduct[] }> {
+    let url = `${this.apiUrl}`;
+    if (category) {
+      url += `?category=${category}`;
+    }
+    return this._httpClient.get<{ data: IProduct[] }>(url);
+  }
 
-  getImages(productCode: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/get-images/${productCode}`);
+  //Añadir un nuevo producto
+  public addProduct(product: IProduct): Observable<any> {
+    let params = JSON.stringify(product);
+    return this._httpClient.post<any>(`${this.apiUrl}`, params, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  // Servicio en Angular para subir múltiples imágenes
+  public uploadImages(productCode: string, formData: FormData): Observable<any> {
+    return this._httpClient.post<any>(`${this.apiUrl}/upload-images/${productCode}`, formData, {
+      headers: {
+      }
+    });
+  }
+
+  public deleteImages(productCode: string, imageName: string): Observable<any> {
+    let body = JSON.stringify({ imageName: imageName });
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+    
+    return this._httpClient.delete<any>(`${this.apiUrl}/delete-image/${productCode}`, { 
+      body: body, 
+      headers: headers 
+    });
+  }
+  
+  //ver Product por Id
+  public getProductsByCode(code: string): Observable<any> { //devuelve observable de un producto
+    return this._httpClient.get<any>(`${this.apiUrl}/${code}`);
+  }
+
+  //actualizar un nuevo producto 
+  public updateProduct(code: string, product: any): Observable<any> {
+    let params = JSON.stringify(product);
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this._httpClient.put<any>(`${this.apiUrl}/${code}`, params, { headers: headers });
+  }
+  
+  public deleteProduct(code: string): Observable<any> {
+    return this._httpClient.delete<any>(`${this.apiUrl}/${code}`);
+  }
+
+  updateInventory(code: string, inventory: any[]): Observable<any> {
+    const inventoryData = {
+      inventory: inventory
+    };
+
+    return this._httpClient.patch<any>(`${this.apiUrl}/${code}`, inventoryData, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
+  public updatePrice(code: string, price: any) {
+    return this._httpClient.patch<any>(`${this.apiUrl}/${code}`, { price: price }, {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }  
+
+  public addSize(code: string, inventory: IInventory | { inventory: IInventory[] }): Observable<any> {
+    return this._httpClient.post<any>(`${this.apiUrl}/${code}/add-size`, inventory);
+  }
+
+  public addColor(code: string, size: string, inventoryData: { colors: IColor[] }) {
+    return this._httpClient.post(`${this.apiUrl}/${code}/${size}/add-color`, inventoryData);
+  }
+
+  public removeSize(code: string, size: string): Observable<any> {
+    return this._httpClient.delete<any>(`${this.apiUrl}/${code}/${size}/remove`);
+  }
+
+  public removeColor(code: string, size: string, color: string) {
+    return this._httpClient.delete(`${this.apiUrl}/${code}/${size}/${color}/remove`);
   }
 }

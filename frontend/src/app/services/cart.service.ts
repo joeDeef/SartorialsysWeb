@@ -21,20 +21,21 @@ export class CartService {
   }
 
   // agregar items al carrito
-  addToCart(cartId: string, productCode: string, quantity: number): Observable<any> {
-    return this._http.post<any>(`${this.url}/${cartId}`, {
-      productCode,
-      quantity,
-    });
+  addToCart(cartId: string, product: any): Observable<any> {
+    return this._http.post<any>(`${this.url}/${cartId}`, product);
+  }
+  
+
+  updateQuantity(cartId: string, itemData: any): Observable<any> {
+    return this._http.patch<any>(`${this.url}/${cartId}`, itemData);
   }
 
-  updateQuantity(cartId: string, productCode: string, newQuantity: number): Observable<any> {
-    return this._http.put<any>(`${this.url}/${cartId}?productCode=${productCode}`, {
-      newQuantity,
+  removeFromCart(cartId: string, itemData: any): Observable<any> {
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this._http.delete<any>(`${this.url}/${cartId}`, {
+      headers: headers,
+      body: itemData,
     });
   }
-
-  removeFromCart(cartId: string, productCode: string): Observable<any> {
-    return this._http.delete<any>(`${this.url}/${cartId}?productCode=${productCode}`);
-  }
+  
 }
